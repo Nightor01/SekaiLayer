@@ -96,7 +96,7 @@ public partial class VaultManager
         {
             RemoveVault(sender, e);
             return;
-        };
+        }
         
         DeleteVault(sender, e);
     }
@@ -137,27 +137,25 @@ public partial class VaultManager
         LoadVaults();
     }
 
-    private void RemoveVault(object sender, RoutedEventArgs e)
+    private void RemoveVault(object sender, RoutedEventArgs _)
     {
-        // TODO Removal logic
-        string windowName = "name";
+        var display = (VaultDisplay)sender;
         
         RemoveWindowEvent(sender, new WindowEventArgs()
         {
-            WindowName = windowName
+            WindowName = display.VaultName
         });
         
         LoadVaults();
     }
     
-    private void DeleteVault(object sender, RoutedEventArgs e)
+    private void DeleteVault(object sender, RoutedEventArgs _)
     {
-        // TODO Deletion logic
-        string windowName = "name";
+        var display = (VaultDisplay)sender;
         
         DeleteWindowEvent(sender, new WindowEventArgs()
         {
-            WindowName = windowName
+            WindowName = display.VaultName
         });
         
         LoadVaults();
