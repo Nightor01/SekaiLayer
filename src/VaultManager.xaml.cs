@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using SekaiLayer.Services;
 
 namespace SekaiLayer;
 
@@ -13,9 +14,10 @@ public delegate void OpenWindowEventHandler(object sender, OpenWindowEventArgs e
 /// <summary>
 /// Interaction logic for VaultManager.xaml
 /// </summary>
-public partial class VaultManager : Window
+public partial class VaultManager
 {
     public event OpenWindowEventHandler OpenWindowEvent = delegate { }; 
+    public event OpenWindowEventHandler CreatedNewWindowEvent = delegate { };
     
     public VaultManager()
     {
@@ -25,10 +27,24 @@ public partial class VaultManager : Window
     private void OpenVaultWindow(object sender, RoutedEventArgs e)
     {
         // TODO: Selection logic
+        string windowName = "name";
         
         OpenWindowEvent(sender, new OpenWindowEventArgs()
         {
-            WindowName = "name"
+            WindowName = windowName
+        });
+        
+        Hide();
+    }
+
+    private void CreateNewVaultWindow(object sender, RoutedEventArgs e)
+    {
+        // TODO Creation logic
+        string windowName = "name";
+
+        CreatedNewWindowEvent(sender, new OpenWindowEventArgs()
+        {
+            WindowName = windowName
         });
         
         Hide();
@@ -37,6 +53,7 @@ public partial class VaultManager : Window
     protected override void OnClosing(CancelEventArgs e)
     {
         Hide();
+        
         // We want to minimize to systray, not close the app
         e.Cancel = true;
     }

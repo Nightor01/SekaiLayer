@@ -1,27 +1,38 @@
 ﻿using System.Windows;
 using SekaiLayer.Services;
+using SekaiLayer.Types.Exceptions;
 
 namespace SekaiLayer;
 
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App
 {
-    private readonly VaultManager _vaultManager;
+    private readonly VaultManager? _vaultManager;
     private readonly Dictionary<string, VaultWindow> _openWindows = [];
-    private readonly FileManager _fileManager;
+    private readonly FileManager? _fileManager;
     private const string _settingsPath = "settings.json";
 
     public App()
     {
         InitializeComponent();
-        
+
+        try
+        {
+            _fileManager = new(_settingsPath);
+        }
+        catch (FileManagerException e)
+        {
+            Dialogues.FileManagerError(e.Message);
+            Current.Shutdown();
+            return;
+        }
         _vaultManager = new();
-        _fileManager = new(_settingsPath);
 
         // TODO: unsubscribe?
         _vaultManager.OpenWindowEvent += OpenVaultWindow;
+        _vaultManager.CreatedNewWindowEvent += CreatedNewVaultWindow;
     }
     
     private void App_Startup(object sender, StartupEventArgs e)
@@ -29,7 +40,7 @@ public partial class App : Application
         var startMinimized = e.Args.Contains("--minimized");
 
         // TODO Make not appear upon start up
-        _vaultManager.Show();
+        _vaultManager!.Show();
 
         if (startMinimized)
         {
@@ -51,9 +62,24 @@ public partial class App : Application
         }
     }
 
+    private void CreatedNewVaultWindow(object sender, OpenWindowEventArgs e)
+    {
+        StartVaultWindow(e.WindowName);
+    }
+
     private void StartVaultWindow(string name)
     {
-        var window = _fileManager.GetVaultWindow(name);
+        VaultWindow window;
+        try
+        {
+            var entry = _fileManager!.GetVaultEntry(name);
+            window = new(_fileManager, entry);
+        }
+        catch (FileManagerException e)
+        {
+            MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
 
         window.Show();
         window.Activate();
