@@ -35,18 +35,12 @@ public class FileManager
     }
 
     /// <exception cref="FileManagerException"></exception>
-    public void CreateVaultWindow(string name, string path)
+    public void CreateVaultWindow(VaultEntry entry)
     {
-        if (_entries.Contains(x => x.Name == name))
+        if (_entries.Contains(x => x.Name == entry.Name))
         {
-            throw new FileManagerException($"Vault with the name {name} already exists!");
+            throw new FileManagerException($"Vault with the name {entry.Name} already exists!");
         }
-
-        var entry = new VaultEntry()
-        {
-            Name = name,
-            Path = path
-        };
 
         _entries.Add(entry);
         

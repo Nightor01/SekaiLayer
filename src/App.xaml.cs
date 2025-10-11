@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using SekaiLayer.Services;
 using SekaiLayer.Types.Exceptions;
+using SekaiLayer.UI.Windows;
 
 namespace SekaiLayer;
 
@@ -60,6 +61,7 @@ public partial class App
         
         if (_openWindows.TryGetValue(windowName, out var window))
         {
+            window.Show();
             window.Activate();
         }
         else
@@ -68,11 +70,11 @@ public partial class App
         }
     }
 
-    private void CreatedNewVaultWindow(object sender, WindowEventArgs e)
+    private void CreatedNewVaultWindow(object sender, CreateVaultEventArgs e)
     {
         try
         {
-            _fileManager!.CreateVaultWindow(e.WindowName, e.Path!);
+            _fileManager!.CreateVaultWindow(e.Entry);
         }
         catch (FileManagerException ex)
         {
@@ -80,7 +82,7 @@ public partial class App
             return;
         }
         
-        StartVaultWindow(e.WindowName);
+        StartVaultWindow(e.Entry.Name);
     }
 
     private void RemoveVaultWindow(object sender, WindowEventArgs e)
@@ -112,18 +114,28 @@ public partial class App
         VaultWindow window;
         try
         {
-            var entry = _fileManager!.GetVaultEntry(name);
-            window = new(_fileManager, entry.Name);
+            window = new(_fileManager!, name);
         }
         catch (FileManagerException e)
         {
             MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
+        
+        window.Closed += WindowOnClosed;
 
         window.Show();
         window.Activate();
         _openWindows[name] = window;
+    }
+
+    private void WindowOnClosed(object? sender, EventArgs e)
+    {
+        var window = (VaultWindow)sender!;
+        
+        window.Closed -= WindowOnClosed;
+        
+        _openWindows.Remove(window.VaultName);
     }
 }
 

@@ -1,25 +1,32 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using SekaiLayer.Services;
+using SekaiLayer.Types;
 using SekaiLayer.UI.Controls;
 
-namespace SekaiLayer;
+namespace SekaiLayer.UI.Windows;
 
 public class WindowEventArgs : EventArgs
 {
     public required string WindowName { get; init; }
-    public string? Path { get; init; }
 }
 
 public delegate void WindowEventHandler(object sender, WindowEventArgs e);
+
+public class CreateVaultEventArgs : EventArgs
+{
+    public required VaultEntry Entry { get; init; }
+}
+
+public delegate void CreateVaultEventHandler(object sender, CreateVaultEventArgs e);
 
 /// <summary>
 /// Interaction logic for VaultManager.xaml
 /// </summary>
 public partial class VaultManager
 {
+    public event CreateVaultEventHandler CreatedNewWindowEvent = delegate { };
     public event WindowEventHandler OpenWindowEvent = delegate { }; 
-    public event WindowEventHandler CreatedNewWindowEvent = delegate { };
     public event WindowEventHandler RemoveWindowEvent = delegate { };
     public event WindowEventHandler DeleteWindowEvent = delegate { };
     
@@ -45,7 +52,7 @@ public partial class VaultManager
 
         foreach (var entry in _fileManager.Entries)
         {
-            var vault = new VaultDisplay(entry)
+            var display = new VaultDisplay(entry)
             {
                 Width = _vaultDisplaySize.Width,
                 Height = _vaultDisplaySize.Height,
@@ -55,9 +62,9 @@ public partial class VaultManager
                 BorderWidth = _vaultDisplayBorderWidth,
             };
             
-            vault.RemoveVaultEvent += VaultOnRemoveVaultEvent;
+            Subscribe(display);
             
-            Vaults.Children.Add(vault);
+            Vaults.Children.Add(display);
         }
     }
 
@@ -65,21 +72,42 @@ public partial class VaultManager
     {
         var display = (VaultDisplay)sender;
         
-        display.RemoveVaultEvent -= VaultOnRemoveVaultEvent;
+        MessageBoxResult result = MessageBox.Show("Do you also want to delete the files?",
+             $"{SekaiLayer.Resources.AppTitle}", MessageBoxButton.YesNoCancel, MessageBoxImage.Question,
+             MessageBoxResult.No 
+             );
+
+        if (result == MessageBoxResult.Cancel) return;
         
-        // TODO: Decision logic (Remove / Delete)
+        UnSubscribe(display);
+
+        if (result == MessageBoxResult.No)
+        {
+            RemoveVaultWindow(sender, e);
+            return;
+        }
         
-        RemoveVaultWindow(sender, e);
+        result = MessageBox.Show("Are you sure? The files will be deleted permanently.\n"
+            + "(And that is a very long time)", "Warning",  MessageBoxButton.YesNo,
+            MessageBoxImage.Warning, MessageBoxResult.No
+            );
+        
+        if (result == MessageBoxResult.No)
+        {
+            RemoveVaultWindow(sender, e);
+            return;
+        };
+        
+        DeleteVaultWindow(sender, e);
     }
 
     private void OpenVaultWindow(object sender, RoutedEventArgs e)
     {
-        // TODO: Selection logic
-        string windowName = "name";
+        var display = (VaultDisplay)sender;
         
         OpenWindowEvent(sender, new WindowEventArgs()
         {
-            WindowName = windowName
+            WindowName = display.VaultName
         });
         
         Hide();
@@ -87,14 +115,15 @@ public partial class VaultManager
 
     private void CreateNewVaultWindow(object sender, RoutedEventArgs e)
     {
-        // TODO Creation logic
-        string windowName = "name";
-        string path = "path";
+        var dialog = new VaultSetupDialog();
+        dialog.ShowDialog();
 
-        CreatedNewWindowEvent(sender, new WindowEventArgs()
+        if (dialog.DialogResult == false || dialog.VaultName is null)
+            return;
+
+        CreatedNewWindowEvent(sender, new CreateVaultEventArgs()
         {
-            WindowName = windowName,
-            Path = path
+            Entry = dialog.VaultConfig!
         });
         
         Hide();
@@ -103,7 +132,7 @@ public partial class VaultManager
 
     private void RemoveVaultWindow(object sender, RoutedEventArgs e)
     {
-        // TODO Creation logic
+        // TODO Removal logic
         string windowName = "name";
         
         RemoveWindowEvent(sender, new WindowEventArgs()
@@ -116,7 +145,7 @@ public partial class VaultManager
     
     private void DeleteVaultWindow(object sender, RoutedEventArgs e)
     {
-        // TODO Creation logic
+        // TODO Deletion logic
         string windowName = "name";
         
         DeleteWindowEvent(sender, new WindowEventArgs()
@@ -146,6 +175,18 @@ public partial class VaultManager
     {
         TaskbarIcon.Dispose();
         Application.Current.Shutdown();
+    }
+
+    private void Subscribe(VaultDisplay display)
+    {
+        display.RemoveVaultEvent += VaultOnRemoveVaultEvent;
+        display.MouseDoubleClick += OpenVaultWindow;
+    }
+    
+    private void UnSubscribe(VaultDisplay display)
+    {
+        display.RemoveVaultEvent -= VaultOnRemoveVaultEvent;
+        display.MouseDoubleClick -= OpenVaultWindow;
     }
     
     private void Open_OnClick(object sender, RoutedEventArgs e) => Open();

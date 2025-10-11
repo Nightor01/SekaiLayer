@@ -1,7 +1,7 @@
 ﻿using SekaiLayer.Services;
 using SekaiLayer.Types;
 
-namespace SekaiLayer;
+namespace SekaiLayer.UI.Windows;
 
 public partial class VaultWindow
 {

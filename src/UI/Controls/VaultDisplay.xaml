@@ -16,7 +16,7 @@
         
         <DockPanel Grid.Row="0" Width="{Binding ElementName=Window, Path=Width}">
             <TextBlock DockPanel.Dock="Left" VerticalAlignment="Top" Margin="5, 5, 0, 0"
-                x:Name="VaultName" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>    
+                       x:Name="NameTextBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>    
             <Button DockPanel.Dock="Right" Width="25" Height="25" HorizontalAlignment="Right"
                     VerticalAlignment="Top" Margin="5"
                     BorderBrush="Transparent" Background="Transparent" x:Name="RemoveButton"

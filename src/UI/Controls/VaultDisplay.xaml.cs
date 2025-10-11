@@ -20,6 +20,7 @@ public partial class VaultDisplay
     public double BorderRadius { get; init; }
     public event RemoveVaultEventHandler RemoveVaultEvent = delegate { };
     private readonly VaultEntry _entry;
+    public string VaultName => _entry.Name;
     
     public VaultDisplay(VaultEntry entry)
     {
@@ -27,7 +28,7 @@ public partial class VaultDisplay
         
         InitializeComponent();
         
-        VaultName.Text = entry.Name;
+        NameTextBlock.Text = entry.Name;
         PathLabel.Content = entry.Path;
         RemoveButton.Visibility = Visibility.Hidden;
     }
@@ -51,9 +52,9 @@ public partial class VaultDisplay
             BorderWidth / 2, Canvas.Margin.Top, Canvas.Margin.Right, Canvas.Margin.Bottom
             );
         
-        VaultName.Width = Width - RemoveButton.Width
+        NameTextBlock.Width = Width - RemoveButton.Width
                         - RemoveButton.Margin.Right - RemoveButton.Margin.Left
-                        - VaultName.Margin.Right - VaultName.Margin.Left;
+                        - NameTextBlock.Margin.Right - NameTextBlock.Margin.Left;
     }
 
     private void VaultDisplay_OnLoaded(object sender, RoutedEventArgs e)
