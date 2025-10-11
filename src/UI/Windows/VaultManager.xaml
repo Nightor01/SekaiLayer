@@ -38,12 +38,12 @@
                        Source="{StaticResource DiPreferences}" />
             </Button>
             <Button Style="{StaticResource StyleMainButton}" ToolTip="Create new vault"
-                    Click="CreateNewVaultWindow">
+                    Click="CreateNewVault">
                 <Image Width="35"
                        Source="{StaticResource DiAddVault}" />
             </Button>
             <Button Style="{StaticResource StyleMainButton}" ToolTip="Open as a vault"
-                    Click="OpenButton_OnClick">
+                    Click="RegisterVault">
                 <Image Width="35"
                        Source="{StaticResource DiOpenAsVault}" />
             </Button>

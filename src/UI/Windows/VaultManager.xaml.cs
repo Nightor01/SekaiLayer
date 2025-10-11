@@ -83,7 +83,7 @@ public partial class VaultManager
 
         if (result == MessageBoxResult.No)
         {
-            RemoveVaultWindow(sender, e);
+            RemoveVault(sender, e);
             return;
         }
         
@@ -94,11 +94,11 @@ public partial class VaultManager
         
         if (result == MessageBoxResult.No)
         {
-            RemoveVaultWindow(sender, e);
+            RemoveVault(sender, e);
             return;
         };
         
-        DeleteVaultWindow(sender, e);
+        DeleteVault(sender, e);
     }
 
     private void OpenVaultWindow(object sender, RoutedEventArgs e)
@@ -113,7 +113,14 @@ public partial class VaultManager
         Hide();
     }
 
-    private void CreateNewVaultWindow(object sender, RoutedEventArgs e)
+    private void CreateNewVault(object sender, RoutedEventArgs e)
+    {
+        RegisterVault(sender, e);
+        
+        // TODO: Prepare vault
+    }
+
+    private void RegisterVault(object sender, RoutedEventArgs e)
     {
         var dialog = new VaultSetupDialog();
         dialog.ShowDialog();
@@ -130,7 +137,7 @@ public partial class VaultManager
         LoadVaults();
     }
 
-    private void RemoveVaultWindow(object sender, RoutedEventArgs e)
+    private void RemoveVault(object sender, RoutedEventArgs e)
     {
         // TODO Removal logic
         string windowName = "name";
@@ -143,7 +150,7 @@ public partial class VaultManager
         LoadVaults();
     }
     
-    private void DeleteVaultWindow(object sender, RoutedEventArgs e)
+    private void DeleteVault(object sender, RoutedEventArgs e)
     {
         // TODO Deletion logic
         string windowName = "name";
@@ -195,11 +202,6 @@ public partial class VaultManager
 
     private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
     {
-        throw new NotImplementedException();
-    }
-
-    private void OpenButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        throw new NotImplementedException();
+        new SettingsDialog(_fileManager).ShowDialog();
     }
 }
