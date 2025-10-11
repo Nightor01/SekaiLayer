@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <DrawingGroup x:Key="AppIcon">
+        <DrawingGroup.ClipGeometry>
+            <RectangleGeometry Rect="0.0,0.0,12.7,12.7"/>
+        </DrawingGroup.ClipGeometry>
+        <DrawingGroup>
+            <GeometryDrawing Brush="#ff03e5fb">
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="1.3229166,11.1125,10.054167,1.5875"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+            <GeometryDrawing Brush="#ff03e5fb">
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="2.6458333,9.5249996,7.4083333,1.0583333"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
+            <GeometryDrawing Brush="#ff03e5fb">
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-1.5785921,5.1966996,4.1159506,4.1159506"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup Transform="0.7071067811865476,0.7071067811865475,-0.7071067811865475,0.7071067811865476,0.0,0.0">
+                <GeometryDrawing Brush="#ff03e5fb">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="4.2993159,-3.7764084,6.2153659,0.88790935"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+            <DrawingGroup Transform="-0.707107,0.707107,0.707107,0.707107,0.0,0.0">
+                <GeometryDrawing Brush="#ff03e5fb">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="-3.7672541,9.6871719,6.2153659,0.88790935"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.ClipGeometry>
+                <RectangleGeometry Rect="-1.5785922,5.1966996,4.1159506,4.1159506" Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0"/>
+            </DrawingGroup.ClipGeometry>
+            <GeometryDrawing Brush="#ff97f5fe">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M 4.19651 1.80526 C 3.70503 2.17387 3.86571 3.21354 4.16344 3.77592 C 4.46116 4.33829 4.89593 4.42335 5.25509 4.31938 C 5.61426 4.21541 5.8978 3.92241 6.1908 3.83263 C 6.48381 3.74284 6.78625 3.85625 6.91857 3.5916 C 7.05089 3.32695 7.01309 2.68425 6.42235 2.21167 C 5.83162 1.73909 4.68799 1.43664 4.19651 1.80526 Z" FillRule="Nonzero"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.ClipGeometry>
+                <RectangleGeometry Rect="-1.5785922,5.1966996,4.1159506,4.1159506" Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0"/>
+            </DrawingGroup.ClipGeometry>
+            <GeometryDrawing Brush="#ff97f5fe">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M 2.48577 4.56985 C 2.69371 4.44225 3.37422 4.68799 3.73338 5.23147 C 4.09254 5.77495 4.13035 6.61612 3.92241 6.74371 C 3.71447 6.8713 3.2608 6.28532 2.90164 5.74184 C 2.54248 5.19837 2.27784 4.69745 2.48577 4.56985 Z" FillRule="Nonzero"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.ClipGeometry>
+                <RectangleGeometry Rect="-1.5785922,5.1966996,4.1159506,4.1159506" Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0"/>
+            </DrawingGroup.ClipGeometry>
+            <GeometryDrawing Brush="#ff97f5fe">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M 5.51501 5.36851 C 5.16057 5.40632 5.04716 5.73712 5.14167 6.0065 C 5.23619 6.27587 5.53864 6.4838 5.74658 6.69646 C 5.95451 6.90913 6.06793 7.12651 6.27114 6.98473 C 6.47435 6.84295 6.76735 6.34202 6.61612 5.96396 C 6.46488 5.58589 5.86944 5.3307 5.51501 5.36851 Z" FillRule="Nonzero"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+    </DrawingGroup>
+    <DrawingImage Drawing="{StaticResource AppIcon}" x:Key="DiColourAppIcon"/>
+</ResourceDictionary>
