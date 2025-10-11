@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <DrawingGroup x:Key="Layer1">
+        <DrawingGroup.ClipGeometry>
+            <RectangleGeometry Rect="0.0,0.0,12.7,12.7"/>
+        </DrawingGroup.ClipGeometry>
+        <DrawingGroup Transform="6.123031769111886e-17,-1.0,1.0,6.123031769111886e-17,0.0,0.0">
+            <GeometryDrawing Brush="#ff000000">
+                <GeometryDrawing.Pen>
+                    <Pen Brush="#ff000000" LineJoin="Bevel" Thickness="0.80243" DashCap="Round" EndLineCap="Round" StartLineCap="Round"/>
+                </GeometryDrawing.Pen>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-7.2717018,1.4595484,1.8434035,9.7809029"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup Transform="-1.0,0.0,0.0,-1.0,0.0,0.0">
+            <GeometryDrawing Brush="#ff000000">
+                <GeometryDrawing.Pen>
+                    <Pen Brush="#ff000000" LineJoin="Bevel" Thickness="0.80243" DashCap="Round" EndLineCap="Round" StartLineCap="Round"/>
+                </GeometryDrawing.Pen>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-7.2717018,-11.240451,1.8434035,9.7809029"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+    </DrawingGroup>
+    <DrawingImage Drawing="{StaticResource Layer1}" x:Key="DiAddVault"/>
+</ResourceDictionary>

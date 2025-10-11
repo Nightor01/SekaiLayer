@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <DrawingGroup x:Key="Layer1">
+        <DrawingGroup.ClipGeometry>
+            <RectangleGeometry Rect="0.0,0.0,12.7,12.7"/>
+        </DrawingGroup.ClipGeometry>
+        <DrawingGroup Transform="1.0,0.0,0.0,1.0,-0.03504583,0.0">
+            <GeometryDrawing Brush="#00ffffff">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="m 2.54074 0.522563 h 7.67739 c 1.0981 0 1.98214 0.884033 1.98214 1.98214 v 7.67739 c 0 1.0981 -0.884033 1.98214 -1.98214 1.98214 H 2.54074 c -1.0981 0 -1.98214 -0.884033 -1.98214 -1.98214 V 2.5047 c 0 -1.0981 0.884033 -1.98214 1.98214 -1.98214 z" FillRule="Nonzero"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+            <GeometryDrawing Brush="#ff000000">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="m 11.7012 4.23333 v 5.94831 c 0 0.829751 -0.65267 1.48242 -1.48242 1.48242 H 2.54102 c -0.829752 0 -1.48242 -0.652671 -1.48242 -1.48242 V 2.50391 c 0 -0.829752 0.65267 -1.48047 1.48242 -1.48047 H 8.46667 V 0.0235479 m 0 0 H 2.54102 c -1.36645 0 -2.48242 1.1139 -2.48242 2.48036 v 7.67773 c 0 1.36645 1.11597 2.48242 2.48242 2.48242 H 10.2188 c 1.36645 0 2.48242 -1.11597 2.48242 -2.48242 V 4.23333 h -0.999974" FillRule="Nonzero"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+            <GeometryDrawing Brush="#ff000000">
+                <GeometryDrawing.Pen>
+                    <Pen Brush="#00000000" LineJoin="Round" Thickness="0.0" DashCap="Round" EndLineCap="Round" StartLineCap="Round"/>
+                </GeometryDrawing.Pen>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="9.5364981,0.023547916,3.175,3.175"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+    </DrawingGroup>
+    <DrawingImage Drawing="{StaticResource Layer1}" x:Key="DiOpenAsVault"/>
+</ResourceDictionary>

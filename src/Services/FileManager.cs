@@ -10,16 +10,17 @@ namespace SekaiLayer.Services;
 public class FileManager
 {
     private readonly string _settingsPath;
-    private readonly HashSet<VaultEntry> _entries;
+    private readonly GlobalSettings _globalSettings;
+    private HashSet<VaultEntry> _entries => _globalSettings.Entries;
 
-    public IReadOnlyCollection<VaultEntry> Entries => _entries;
+    public IReadOnlyCollection<VaultEntry> Entries => _globalSettings.Entries;
     
     /// <param name="settingsPath">Path to the FileManager settings file</param>
     /// <exception cref="FileManagerException"></exception>
     public FileManager(string settingsPath)
     {
         _settingsPath = settingsPath;
-        _entries = ReadSettings();
+        _globalSettings = ReadSettings();
     }
 
     /// <exception cref="FileManagerException"></exception>
@@ -53,6 +54,26 @@ public class FileManager
     }
 
     /// <exception cref="FileManagerException"></exception>
+    public void RemoveVaultWindow(string name)
+    {
+        var entry = _entries.FirstOrDefault(x => x.Name == name);
+
+        if (entry is null)
+            return;
+
+        _entries.Remove(entry);
+        
+        WriteSettings();
+    }
+
+    public void DeleteVaultWindow(string name)
+    {
+        // TODO: Delete files
+        
+        RemoveVaultWindow(name);
+    }
+
+    /// <exception cref="FileManagerException"></exception>
     private void WriteSettings()
     {
         try
@@ -72,21 +93,25 @@ public class FileManager
     }
     
     /// <exception cref="FileManagerException"></exception>
-    private HashSet<VaultEntry> ReadSettings()
+    private GlobalSettings ReadSettings()
     {
         if (!File.Exists(_settingsPath))
         {
             CreateSettingsFile();
-            return [];
+            return new()
+            {
+                Entries = [],
+                AppSettings = new()
+            };
         }
 
-        HashSet<VaultEntry>? entries;
+        GlobalSettings? settings;
         try
         {
             string text = File.ReadAllText(_settingsPath);
-            entries = JsonSerializer.Deserialize<HashSet<VaultEntry>>(text);
+            settings = JsonSerializer.Deserialize<GlobalSettings>(text);
 
-            if (entries is null)
+            if (settings is null)
                 throw new FileManagerException($"Entries read from {_settingsPath} ended up being `null`");
         }
         catch (Exception e) when (e
@@ -100,7 +125,7 @@ public class FileManager
             throw new FileManagerException($"Failed to read settings file {_settingsPath}\n" + e.Message);
         }
 
-        return entries;
+        return settings;
     }
 
     /// <exception cref="FileManagerException"></exception>

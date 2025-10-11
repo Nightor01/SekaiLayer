@@ -4,23 +4,29 @@ using SekaiLayer.Services;
 
 namespace SekaiLayer;
 
-public class OpenWindowEventArgs : EventArgs
+public class WindowEventArgs : EventArgs
 {
     public required string WindowName { get; init; }
 }
 
-public delegate void OpenWindowEventHandler(object sender, OpenWindowEventArgs e);
+public delegate void WindowEventHandler(object sender, WindowEventArgs e);
 
 /// <summary>
 /// Interaction logic for VaultManager.xaml
 /// </summary>
 public partial class VaultManager
 {
-    public event OpenWindowEventHandler OpenWindowEvent = delegate { }; 
-    public event OpenWindowEventHandler CreatedNewWindowEvent = delegate { };
+    public event WindowEventHandler OpenWindowEvent = delegate { }; 
+    public event WindowEventHandler CreatedNewWindowEvent = delegate { };
+    public event WindowEventHandler RemoveWindowEvent = delegate { };
+    public event WindowEventHandler DeleteWindowEvent = delegate { };
     
-    public VaultManager()
+    private readonly FileManager _fileManager;
+    
+    public VaultManager(FileManager fileManager)
     {
+        _fileManager = fileManager;
+        
         InitializeComponent();
     }
 
@@ -29,7 +35,7 @@ public partial class VaultManager
         // TODO: Selection logic
         string windowName = "name";
         
-        OpenWindowEvent(sender, new OpenWindowEventArgs()
+        OpenWindowEvent(sender, new WindowEventArgs()
         {
             WindowName = windowName
         });
@@ -42,12 +48,34 @@ public partial class VaultManager
         // TODO Creation logic
         string windowName = "name";
 
-        CreatedNewWindowEvent(sender, new OpenWindowEventArgs()
+        CreatedNewWindowEvent(sender, new WindowEventArgs()
         {
             WindowName = windowName
         });
         
         Hide();
+    }
+
+    private void RemoveVaultWindow(object sender, RoutedEventArgs e)
+    {
+        // TODO Creation logic
+        string windowName = "name";
+        
+        RemoveWindowEvent(sender, new WindowEventArgs()
+        {
+            WindowName = windowName
+        });
+    }
+    
+    private void DeleteVaultWindow(object sender, RoutedEventArgs e)
+    {
+        // TODO Creation logic
+        string windowName = "name";
+        
+        DeleteWindowEvent(sender, new WindowEventArgs()
+        {
+            WindowName = windowName
+        });
     }
     
     protected override void OnClosing(CancelEventArgs e)
@@ -74,4 +102,19 @@ public partial class VaultManager
     private void Open_OnClick(object sender, RoutedEventArgs e) => Open();
     private void Exit_OnClick(object sender, RoutedEventArgs e) => Exit();
     private void TaskbarIcon_OnTrayLeftMouseDoubleClick(object sender, RoutedEventArgs e) => Open();
+
+    private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void CreateButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void OpenButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 }

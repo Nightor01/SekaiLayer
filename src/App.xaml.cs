@@ -28,18 +28,24 @@ public partial class App
             Current.Shutdown();
             return;
         }
-        _vaultManager = new();
+        _vaultManager = new(_fileManager);
 
         // TODO: unsubscribe?
         _vaultManager.OpenWindowEvent += OpenVaultWindow;
         _vaultManager.CreatedNewWindowEvent += CreatedNewVaultWindow;
+        _vaultManager.RemoveWindowEvent += RemoveVaultWindow;
+        _vaultManager.DeleteWindowEvent += DeleteVaultWindow;
     }
     
     private void App_Startup(object sender, StartupEventArgs e)
     {
         var startMinimized = e.Args.Contains("--minimized");
 
-        // TODO Make not appear upon start up
+        // TODO: Just return?
+        if (_vaultManager is null)
+            return;
+
+        // TODO: Make not appear upon start up
         _vaultManager!.Show();
 
         if (startMinimized)
@@ -48,7 +54,7 @@ public partial class App
         }
     }
 
-    private void OpenVaultWindow(object sender, OpenWindowEventArgs e)
+    private void OpenVaultWindow(object sender, WindowEventArgs e)
     {
         string windowName = e.WindowName;
         
@@ -62,9 +68,33 @@ public partial class App
         }
     }
 
-    private void CreatedNewVaultWindow(object sender, OpenWindowEventArgs e)
+    private void CreatedNewVaultWindow(object sender, WindowEventArgs e)
     {
         StartVaultWindow(e.WindowName);
+    }
+
+    private void RemoveVaultWindow(object sender, WindowEventArgs e)
+    {
+        try
+        {
+            _fileManager!.RemoveVaultWindow(e.WindowName);
+        }
+        catch (FileManagerException ex)
+        {
+            Dialogues.FileManagerError(ex.Message);
+        }
+    }
+
+    private void DeleteVaultWindow(object sender, WindowEventArgs e)
+    {
+        try
+        {
+            _fileManager!.DeleteVaultWindow(e.WindowName);
+        }
+        catch (FileManagerException ex)
+        {
+            Dialogues.FileManagerError(ex.Message);
+        }
     }
 
     private void StartVaultWindow(string name)
@@ -73,7 +103,7 @@ public partial class App
         try
         {
             var entry = _fileManager!.GetVaultEntry(name);
-            window = new(_fileManager, entry);
+            window = new(_fileManager, entry.Name);
         }
         catch (FileManagerException e)
         {

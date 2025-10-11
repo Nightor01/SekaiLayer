@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using SekaiLayer.Services;
+﻿using SekaiLayer.Services;
 using SekaiLayer.Types;
 
 namespace SekaiLayer;
@@ -7,12 +6,12 @@ namespace SekaiLayer;
 public partial class VaultWindow
 {
     public string VaultName { get; private set; }
-    private FileManager _fileManager;
+    private readonly FileManager _fileManager;
     
-    public VaultWindow(FileManager fileManager, VaultEntry entry)
+    public VaultWindow(FileManager fileManager, string name)
     {
         _fileManager = fileManager;
-        VaultName = entry.Name;
+        VaultName = name;
         
         InitializeComponent();
     }

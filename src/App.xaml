@@ -8,6 +8,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/icon_coloured.xaml" />
                 <ResourceDictionary Source="/Resources/icon.xaml" />
+                <ResourceDictionary Source="/Resources/add_vault.xaml" />
+                <ResourceDictionary Source="/Resources/open_as_vault_strong.xaml" />
+                <ResourceDictionary Source="/Resources/preferences.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <ImageSource x:Key="AppIcoIcon">/Resources/icon_coloured.ico</ImageSource>
             <sys:String x:Key="AppTitle">Sekai-Layer</sys:String>

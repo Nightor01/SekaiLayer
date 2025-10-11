@@ -8,9 +8,56 @@
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Icon="{StaticResource AppIcoIcon}"
-        Title="{StaticResource AppTitle}" Height="450" Width="800">
+        Title="{StaticResource AppTitle}" Height="450" Width="450">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="StyleMainButton" TargetType="Button">
+                <Setter Property="Width" Value="50"/>
+                <Setter Property="Height" Value="50"/>
+                <Setter Property="Margin" Value="5"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        <tb:TaskbarIcon Name="TaskbarIcon"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <!-- Icon -->
+        <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+               Width="150" Height="150" Source="{StaticResource DiColourAppIcon}"/>
+        <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+            <Button Style="{StaticResource StyleMainButton}" ToolTip="Settings"
+                    Click="SettingsButton_OnClick">
+                <Image Width="35"
+                       Source="{StaticResource DiPreferences}" />
+            </Button>
+            <Button Style="{StaticResource StyleMainButton}" ToolTip="Create new vault"
+                    Click="CreateButton_OnClick">
+                <Image Width="35"
+                       Source="{StaticResource DiAddVault}" />
+            </Button>
+            <Button Style="{StaticResource StyleMainButton}" ToolTip="Open as a vault"
+                    Click="OpenButton_OnClick">
+                <Image Width="35"
+                       Source="{StaticResource DiOpenAsVault}" />
+            </Button>
+        </StackPanel>
+        
+        <!-- Switcher -->
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                      HorizontalScrollBarVisibility="Visible"
+                      VerticalScrollBarVisibility="Disabled">
+            <StackPanel Background="WhiteSmoke" x:Name="Vaults" Orientation="Horizontal" CanHorizontallyScroll="True"/>    
+        </ScrollViewer>
+        
+        <!-- Systray -->
+        <tb:TaskbarIcon Grid.Row="0" Grid.Column="0" Name="TaskbarIcon"
                         ToolTip="{StaticResource AppTitle}"
                         Visibility="Visible"
                         TrayLeftMouseDoubleClick="TaskbarIcon_OnTrayLeftMouseDoubleClick"
