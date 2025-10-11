@@ -9,11 +9,17 @@ namespace SekaiLayer.Services;
 
 public class FileManager
 {
+    private static readonly JsonSerializerOptions _options = new()
+    {
+        WriteIndented = true,
+    };
+    
     private readonly string _settingsPath;
     private readonly GlobalSettings _globalSettings;
     private HashSet<VaultEntry> _entries => _globalSettings.Entries;
 
     public IReadOnlyCollection<VaultEntry> Entries => _globalSettings.Entries;
+    public AppSettings AppSettings => _globalSettings.AppSettings;
     
     /// <param name="settingsPath">Path to the FileManager settings file</param>
     /// <exception cref="FileManagerException"></exception>
@@ -72,7 +78,7 @@ public class FileManager
     {
         try
         {
-            string text = JsonSerializer.Serialize(settings);
+            string text = JsonSerializer.Serialize(settings, _options);
             File.WriteAllText(_settingsPath, text);
         }
         catch (Exception e) when (e

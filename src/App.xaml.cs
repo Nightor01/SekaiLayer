@@ -40,11 +40,11 @@ public partial class App
     
     private void App_Startup(object sender, StartupEventArgs e)
     {
-        var startMinimized = e.Args.Contains("--minimized");
-
         // TODO: Just return?
-        if (_vaultManager is null)
+        if (_vaultManager is null || _fileManager is null)
             return;
+        
+        bool startMinimized = e.Args.Contains("--minimized") || _fileManager.AppSettings.StartMinimized;
 
         // TODO: Make not appear upon start up
         _vaultManager!.Show();
