@@ -50,7 +50,7 @@ public class FileManager
 
         _entries.Add(entry);
         
-        WriteSettings();
+        WriteSettings(_globalSettings);
     }
 
     /// <exception cref="FileManagerException"></exception>
@@ -63,7 +63,7 @@ public class FileManager
 
         _entries.Remove(entry);
         
-        WriteSettings();
+        WriteSettings(_globalSettings);
     }
 
     public void DeleteVaultWindow(string name)
@@ -74,11 +74,11 @@ public class FileManager
     }
 
     /// <exception cref="FileManagerException"></exception>
-    private void WriteSettings()
+    private void WriteSettings(GlobalSettings settings)
     {
         try
         {
-            string text = JsonSerializer.Serialize(_entries);
+            string text = JsonSerializer.Serialize(settings);
             File.WriteAllText(_settingsPath, text);
         }
         catch (Exception e) when (e
@@ -95,17 +95,19 @@ public class FileManager
     /// <exception cref="FileManagerException"></exception>
     private GlobalSettings ReadSettings()
     {
+        GlobalSettings? settings;
+        
         if (!File.Exists(_settingsPath))
         {
-            CreateSettingsFile();
-            return new()
+            settings = new GlobalSettings()
             {
                 Entries = [],
                 AppSettings = new()
             };
+            WriteSettings(settings);
+            return settings;
         }
 
-        GlobalSettings? settings;
         try
         {
             string text = File.ReadAllText(_settingsPath);
@@ -126,22 +128,5 @@ public class FileManager
         }
 
         return settings;
-    }
-
-    /// <exception cref="FileManagerException"></exception>
-    private void CreateSettingsFile()
-    {
-        try
-        {
-            File.Create(_settingsPath).Close();
-        }
-        catch (Exception e) when (e
-            is UnauthorizedAccessException
-            or ArgumentException
-            or IOException
-            or NotSupportedException
-        ) {
-            throw new FileManagerException($"Settings file {_settingsPath} could not be created.\n" + e.Message);
-        }
     }
 }

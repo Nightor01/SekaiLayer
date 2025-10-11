@@ -20,6 +20,7 @@
   <ItemGroup>
     <Folder Include="assets\" />
     <Folder Include="docs\" />
+    <Folder Include="src\UI\Controls\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,19 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="src\UI\Windows\VaultManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="src\UI\Windows\VaultWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>
