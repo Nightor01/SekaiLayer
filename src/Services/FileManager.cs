@@ -29,7 +29,7 @@ public class FileManager
         var entry = _entries.FirstOrDefault(x => x.Name == name);
         
         if (entry is null)
-            throw new FileNotFoundException($"The vault {name} was not found.");
+            throw new FileManagerException($"The vault {name} was not found.");
 
         return entry;
     }

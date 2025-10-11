@@ -70,6 +70,16 @@ public partial class App
 
     private void CreatedNewVaultWindow(object sender, WindowEventArgs e)
     {
+        try
+        {
+            _fileManager!.CreateVaultWindow(e.WindowName, e.Path!);
+        }
+        catch (FileManagerException ex)
+        {
+            Dialogues.FileManagerError(ex.Message);
+            return;
+        }
+        
         StartVaultWindow(e.WindowName);
     }
 
