@@ -5,5 +5,5 @@ namespace SekaiLayer.Types;
 public class AppSettings
 {
     [JsonPropertyName("start_minimized")]
-    public bool StartMinimized { get; init; } = false;
+    public bool StartMinimized { get; set; } = false;
 }
