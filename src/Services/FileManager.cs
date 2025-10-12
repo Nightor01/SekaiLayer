@@ -30,17 +30,6 @@ public class FileManager
     }
 
     /// <exception cref="FileManagerException"></exception>
-    public VaultEntry GetVaultEntry(string name)
-    {
-        var entry = _entries.FirstOrDefault(x => x.Name == name);
-        
-        if (entry is null)
-            throw new FileManagerException($"The vault {name} was not found.");
-
-        return entry;
-    }
-
-    /// <exception cref="FileManagerException"></exception>
     public void CreateVaultWindow(VaultEntry entry)
     {
         if (_entries.Contains(x => x.Name == entry.Name))
