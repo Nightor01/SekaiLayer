@@ -113,14 +113,19 @@ public partial class VaultManager
         Hide();
     }
 
-    public void CreateNewVault(object sender, RoutedEventArgs e)
+    public void CreateNewVault()
     {
-        RegisterVault(sender, e);
+        RegisterVault();
         
         // TODO: Prepare vault
     }
+    
+    private void CreateNewVaultCaller(object sender, RoutedEventArgs e)
+    {
+        CreateNewVault();
+    }
 
-    private void RegisterVault(object sender, RoutedEventArgs e)
+    private void RegisterVault()
     {
         var dialog = new VaultSetupDialog();
         dialog.ShowDialog();
@@ -128,13 +133,18 @@ public partial class VaultManager
         if (dialog.DialogResult == false || dialog.VaultName is null)
             return;
 
-        CreatedNewWindowEvent(sender, new CreateVaultEventArgs()
+        CreatedNewWindowEvent(this, new CreateVaultEventArgs()
         {
             Entry = dialog.VaultConfig!
         });
         
         Hide();
         LoadVaults();
+    }
+
+    private void RegisterVaultCaller(object sender, RoutedEventArgs e)
+    {
+        RegisterVault();
     }
 
     private void RemoveVault(object sender, RoutedEventArgs _)

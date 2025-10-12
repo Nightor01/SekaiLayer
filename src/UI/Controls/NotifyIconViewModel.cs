@@ -37,9 +37,6 @@ public partial class NotifyIconViewModel : ObservableObject
             return;
 
         // TODO: This is a strange way to go about it
-        app.VaultManager.CreateNewVault(this, new RoutedEventArgs()
-        {
-            Source = this
-        });
+        app.VaultManager.CreateNewVault();
     }
 }
