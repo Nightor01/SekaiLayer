@@ -28,6 +28,14 @@ public class FileManager
         _settingsPath = settingsPath;
         _globalSettings = ReadSettings();
     }
+
+    /// <exception cref="FileManagerException"></exception>
+    public void UpdateAppSettings(AppSettings appSettings)
+    {
+        _globalSettings.AppSettings = appSettings;
+        
+        WriteSettings(_globalSettings);
+    }
     
     /// <exception cref="FileManagerException"></exception>
     public VaultEntry GetEntry(string key)
