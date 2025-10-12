@@ -79,7 +79,7 @@ public partial class VaultManager
 
         if (result == MessageBoxResult.Cancel) return;
         
-        UnSubscribe(display);
+        Unsubscribe(display);
 
         if (result == MessageBoxResult.No)
         {
@@ -188,7 +188,7 @@ public partial class VaultManager
         display.MouseDoubleClick += OpenVaultWindow;
     }
     
-    private void UnSubscribe(VaultDisplay display)
+    private void Unsubscribe(VaultDisplay display)
     {
         display.RemoveVaultEvent -= VaultOnRemoveVaultEvent;
         display.MouseDoubleClick -= OpenVaultWindow;

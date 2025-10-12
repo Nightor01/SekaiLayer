@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using SekaiLayer.Services;
 using SekaiLayer.Types.Exceptions;
 using SekaiLayer.UI.Windows;
@@ -30,14 +31,33 @@ public partial class App
             return;
         }
         _vaultManager = new(_fileManager);
+        
+        SubscribeVaultManagerEvents();
+    }
 
-        // TODO: unsubscribe?
-        _vaultManager.OpenWindowEvent += OpenVaultWindow;
+    private void SubscribeVaultManagerEvents()
+    {
+        _vaultManager!.OpenWindowEvent += OpenVaultWindow;
         _vaultManager.CreatedNewWindowEvent += CreatedNewVaultWindow;
         _vaultManager.RemoveWindowEvent += RemoveVaultWindow;
         _vaultManager.DeleteWindowEvent += DeleteVaultWindow;
+        _vaultManager.Closing += VaultManagerOnClosing;
     }
-    
+
+    private void UnsubscribeVaultManagerEvents()
+    {
+        _vaultManager!.OpenWindowEvent -= OpenVaultWindow;
+        _vaultManager.CreatedNewWindowEvent -= CreatedNewVaultWindow;
+        _vaultManager.RemoveWindowEvent -= RemoveVaultWindow;
+        _vaultManager.DeleteWindowEvent -= DeleteVaultWindow;
+        _vaultManager.Closing -= VaultManagerOnClosing;
+    }
+
+    private void VaultManagerOnClosing(object? sender, CancelEventArgs e)
+    {
+        UnsubscribeVaultManagerEvents();
+    }
+
     private void App_Startup(object sender, StartupEventArgs e)
     {
         // TODO: Just return?
