@@ -23,7 +23,7 @@ public delegate void CreateVaultEventHandler(object sender, CreateVaultEventArgs
 /// <summary>
 /// Interaction logic for VaultManager.xaml
 /// </summary>
-public partial class VaultManager
+public partial class VaultSwitcher
 {
     public event CreateVaultEventHandler CreatedNewWindowEvent = delegate { };
     public event WindowEventHandler OpenWindowEvent = delegate { }; 
@@ -37,7 +37,7 @@ public partial class VaultManager
     private const double _vaultDisplayBorderRadius = 10;
     private const double _vaultDisplayBorderWidth = 2;
     
-    public VaultManager(FileManager fileManager)
+    public VaultSwitcher(FileManager fileManager)
     {
         _fileManager = fileManager;
         

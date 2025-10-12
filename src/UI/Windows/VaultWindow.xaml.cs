@@ -1,17 +1,16 @@
-﻿using SekaiLayer.Services;
-using SekaiLayer.Types;
+﻿using SekaiLayer.Types;
 
 namespace SekaiLayer.UI.Windows;
 
 public partial class VaultWindow
 {
-    public string VaultName { get; private set; }
-    private readonly FileManager _fileManager;
+    private VaultEntry _entry;
+    public string VaultPath => _entry.Path;
+    public string VaultName => _entry.Name;
     
-    public VaultWindow(FileManager fileManager, string name)
+    public VaultWindow(VaultEntry entry)
     {
-        _fileManager = fileManager;
-        VaultName = name;
+        _entry = entry;
         
         InitializeComponent();
     }

@@ -13,7 +13,7 @@ namespace SekaiLayer;
 /// </summary>
 public partial class App
 {
-    public readonly VaultManager? VaultManager;
+    public readonly VaultSwitcher? VaultManager;
     private readonly Dictionary<string, VaultWindow> _openWindows = [];
     private readonly FileManager? _fileManager;
     private const string _settingsPath = "settings.json";
@@ -133,7 +133,7 @@ public partial class App
     {
         try
         {
-            _fileManager!.CreateVaultWindow(e.Entry);
+            _fileManager!.CreateVault(e.Entry);
         }
         catch (FileManagerException ex)
         {
@@ -148,7 +148,7 @@ public partial class App
     {
         try
         {
-            _fileManager!.RemoveVaultWindow(e.WindowName);
+            _fileManager!.RemoveVault(e.WindowName);
         }
         catch (FileManagerException ex)
         {
@@ -160,7 +160,7 @@ public partial class App
     {
         try
         {
-            _fileManager!.DeleteVaultWindow(e.WindowName);
+            _fileManager!.DeleteVault(e.WindowName);
         }
         catch (FileManagerException ex)
         {
@@ -173,7 +173,7 @@ public partial class App
         VaultWindow window;
         try
         {
-            window = new(_fileManager!, name);
+            window = new(_fileManager!.GetEntry(name));
         }
         catch (FileManagerException e)
         {

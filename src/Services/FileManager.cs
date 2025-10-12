@@ -28,9 +28,20 @@ public class FileManager
         _settingsPath = settingsPath;
         _globalSettings = ReadSettings();
     }
+    
+    /// <exception cref="FileManagerException"></exception>
+    public VaultEntry GetEntry(string key)
+    {
+        var entry = _entries.FirstOrDefault(e => e.Name == key);
+
+        if (entry is null)
+            throw new FileManagerException($"Could not find an entry with name {key}");
+
+        return entry;
+    }
 
     /// <exception cref="FileManagerException"></exception>
-    public void CreateVaultWindow(VaultEntry entry)
+    public void CreateVault(VaultEntry entry)
     {
         if (_entries.Contains(x => x.Name == entry.Name))
         {
@@ -43,7 +54,7 @@ public class FileManager
     }
 
     /// <exception cref="FileManagerException"></exception>
-    public void RemoveVaultWindow(string name)
+    public void RemoveVault(string name)
     {
         var entry = _entries.FirstOrDefault(x => x.Name == name);
 
@@ -55,11 +66,11 @@ public class FileManager
         WriteSettings(_globalSettings);
     }
 
-    public void DeleteVaultWindow(string name)
+    public void DeleteVault(string name)
     {
         // TODO: Delete files
         
-        RemoveVaultWindow(name);
+        RemoveVault(name);
     }
 
     /// <exception cref="FileManagerException"></exception>
