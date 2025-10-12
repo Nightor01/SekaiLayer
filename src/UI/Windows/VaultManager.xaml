@@ -55,21 +55,5 @@
                       VerticalScrollBarVisibility="Disabled">
             <StackPanel Background="WhiteSmoke" x:Name="Vaults" Orientation="Horizontal" CanHorizontallyScroll="True"/>    
         </ScrollViewer>
-        
-        <!-- Systray -->
-        <tb:TaskbarIcon Grid.Row="0" Grid.Column="0" Name="TaskbarIcon"
-                        ToolTip="{StaticResource AppTitle}"
-                        Visibility="Visible"
-                        TrayLeftMouseDoubleClick="TaskbarIcon_OnTrayLeftMouseDoubleClick"
-                        IconSource="{StaticResource AppIcoIcon}">
-            <!-- IconSource="{StaticResource AppIcoIcon}" -->
-            <tb:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Open" Click="Open_OnClick" />
-                    <MenuItem Header="Exit" Click="Exit_OnClick" />
-                    <MenuItem Header="New Vault" Click="CreateNewVault" />
-                </ContextMenu>
-            </tb:TaskbarIcon.ContextMenu>
-        </tb:TaskbarIcon>
     </Grid>
 </Window>

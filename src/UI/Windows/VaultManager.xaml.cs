@@ -113,7 +113,7 @@ public partial class VaultManager
         Hide();
     }
 
-    private void CreateNewVault(object sender, RoutedEventArgs e)
+    public void CreateNewVault(object sender, RoutedEventArgs e)
     {
         RegisterVault(sender, e);
         
@@ -169,19 +169,6 @@ public partial class VaultManager
         e.Cancel = true;
     }
 
-    private void Open()
-    {
-        Show();
-        WindowState = WindowState.Normal;
-        Activate();
-    }
-
-    private void Exit()
-    {
-        TaskbarIcon.Dispose();
-        Application.Current.Shutdown();
-    }
-
     private void Subscribe(VaultDisplay display)
     {
         display.RemoveVaultEvent += VaultOnRemoveVaultEvent;
@@ -193,10 +180,6 @@ public partial class VaultManager
         display.RemoveVaultEvent -= VaultOnRemoveVaultEvent;
         display.MouseDoubleClick -= OpenVaultWindow;
     }
-    
-    private void Open_OnClick(object sender, RoutedEventArgs e) => Open();
-    private void Exit_OnClick(object sender, RoutedEventArgs e) => Exit();
-    private void TaskbarIcon_OnTrayLeftMouseDoubleClick(object sender, RoutedEventArgs e) => Open();
 
     private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
     {

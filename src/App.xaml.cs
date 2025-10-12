@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using H.NotifyIcon;
 using SekaiLayer.Services;
 using SekaiLayer.Types.Exceptions;
+using SekaiLayer.UI.Controls;
 using SekaiLayer.UI.Windows;
 
 namespace SekaiLayer;
@@ -11,10 +13,11 @@ namespace SekaiLayer;
 /// </summary>
 public partial class App
 {
-    private readonly VaultManager? _vaultManager;
+    public readonly VaultManager? VaultManager;
     private readonly Dictionary<string, VaultWindow> _openWindows = [];
     private readonly FileManager? _fileManager;
     private const string _settingsPath = "settings.json";
+    private readonly TaskbarIcon? _notifyIcon;
 
     public App()
     {
@@ -30,27 +33,60 @@ public partial class App
             Current.Shutdown();
             return;
         }
-        _vaultManager = new(_fileManager);
+        
+        VaultManager = new(_fileManager);
+        _notifyIcon = (TaskbarIcon)Current.FindResource("NotifyIcon")!;
+        NotifyIconViewModel.ExitApplicationEvent += OnExitApplicationEvent;
         
         SubscribeVaultManagerEvents();
     }
 
-    private void SubscribeVaultManagerEvents()
+    protected override void OnExit(ExitEventArgs e)
     {
-        _vaultManager!.OpenWindowEvent += OpenVaultWindow;
-        _vaultManager.CreatedNewWindowEvent += CreatedNewVaultWindow;
-        _vaultManager.RemoveWindowEvent += RemoveVaultWindow;
-        _vaultManager.DeleteWindowEvent += DeleteVaultWindow;
-        _vaultManager.Closing += VaultManagerOnClosing;
+        base.OnExit(e);
+
+        if (_notifyIcon is not null && _notifyIcon.IsCreated)
+        {
+            _notifyIcon?.Dispose();
+            NotifyIconViewModel.ExitApplicationEvent -= OnExitApplicationEvent;
+        }
     }
 
+    private void SubscribeVaultManagerEvents()
+    {
+        VaultManager!.OpenWindowEvent += OpenVaultWindow;
+        VaultManager.CreatedNewWindowEvent += CreatedNewVaultWindow;
+        VaultManager.RemoveWindowEvent += RemoveVaultWindow;
+        VaultManager.DeleteWindowEvent += DeleteVaultWindow;
+        VaultManager.Closing += VaultManagerOnClosing;
+    }
+    
     private void UnsubscribeVaultManagerEvents()
     {
-        _vaultManager!.OpenWindowEvent -= OpenVaultWindow;
-        _vaultManager.CreatedNewWindowEvent -= CreatedNewVaultWindow;
-        _vaultManager.RemoveWindowEvent -= RemoveVaultWindow;
-        _vaultManager.DeleteWindowEvent -= DeleteVaultWindow;
-        _vaultManager.Closing -= VaultManagerOnClosing;
+        VaultManager!.OpenWindowEvent -= OpenVaultWindow;
+        VaultManager.CreatedNewWindowEvent -= CreatedNewVaultWindow;
+        VaultManager.RemoveWindowEvent -= RemoveVaultWindow;
+        VaultManager.DeleteWindowEvent -= DeleteVaultWindow;
+        VaultManager.Closing -= VaultManagerOnClosing;
+    }
+    
+    private void OnExitApplicationEvent(object? sender, EventArgs e)
+    {
+        if (!_openWindows.Any())
+        {
+            Current.Shutdown();
+            return;
+        }
+        
+        MessageBoxResult result = MessageBox.Show(VaultManager!, "You have some vaults open now.\n"
+            + "Are you certain you want to quit the application now?", "Warning",
+            MessageBoxButton.YesNo, MessageBoxImage.Warning,  MessageBoxResult.No
+            );
+
+        if (result == MessageBoxResult.Yes)
+        {
+            Current.Shutdown();
+        }
     }
 
     private void VaultManagerOnClosing(object? sender, CancelEventArgs e)
@@ -61,18 +97,21 @@ public partial class App
     private void App_Startup(object sender, StartupEventArgs e)
     {
         // TODO: Just return?
-        if (_vaultManager is null || _fileManager is null)
+        if (VaultManager is null || _fileManager is null || _notifyIcon is null)
             return;
         
         bool startMinimized = e.Args.Contains("--minimized") || _fileManager.AppSettings.StartMinimized;
 
-        // TODO: Make not appear upon start up
-        _vaultManager!.Show();
-
         if (startMinimized)
         {
-            _vaultManager.Hide();
+            VaultManager.Hide();
         }
+        else
+        {
+            VaultManager!.Show();
+        }
+        
+        _notifyIcon!.ForceCreate();
     }
 
     private void OpenVaultWindow(object sender, WindowEventArgs e)

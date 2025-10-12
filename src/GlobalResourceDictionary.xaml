@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Resources/icon_coloured.xaml" />
+        <ResourceDictionary Source="/Resources/icon.xaml" />
+        <ResourceDictionary Source="/Resources/add_vault.xaml" />
+        <ResourceDictionary Source="/Resources/open_as_vault_strong.xaml" />
+        <ResourceDictionary Source="/Resources/preferences.xaml" />
+        <ResourceDictionary Source="/Resources/remove.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <ImageSource x:Key="AppIcoIcon">/Resources/icon_coloured.ico</ImageSource>
+    <sys:String x:Key="AppTitle">Sekai-Layer</sys:String>
+</ResourceDictionary>

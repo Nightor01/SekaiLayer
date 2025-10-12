@@ -20,10 +20,10 @@
   <ItemGroup>
     <Folder Include="assets\" />
     <Folder Include="docs\" />
-    <Folder Include="src\UI\Controls\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="H.NotifyIcon.Wpf" Version="2.3.1" />
   </ItemGroup>
 
