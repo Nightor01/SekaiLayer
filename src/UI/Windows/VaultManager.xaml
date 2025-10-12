@@ -67,6 +67,7 @@
                 <ContextMenu>
                     <MenuItem Header="Open" Click="Open_OnClick" />
                     <MenuItem Header="Exit" Click="Exit_OnClick" />
+                    <MenuItem Header="New Vault" Click="CreateNewVault" />
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
