@@ -115,22 +115,29 @@ public partial class VaultSwitcher
 
     public void CreateNewVault()
     {
-        RegisterVault();
+        var dialog = new VaultSetupDialog();
+        if (dialog.ShowDialog() == false)
+            return;
+
+        var vaultConfig = new VaultEntry()
+        {
+            Name = dialog.VaultConfig!.Name,
+            Path = dialog.VaultConfig!.Path + Name,
+            Encryption = dialog.VaultConfig!.Encryption
+        };
+
+        CreatedNewWindowEvent(this, new CreateVaultEventArgs()
+        {
+            Entry = vaultConfig
+        });
         
         // TODO: Prepare vault
-    }
-    
-    private void CreateNewVaultCaller(object sender, RoutedEventArgs e)
-    {
-        CreateNewVault();
     }
 
     private void RegisterVault()
     {
         var dialog = new VaultSetupDialog();
-        dialog.ShowDialog();
-
-        if (dialog.DialogResult == false || dialog.VaultName is null)
+        if (dialog.ShowDialog() == false)
             return;
 
         CreatedNewWindowEvent(this, new CreateVaultEventArgs()
@@ -142,10 +149,9 @@ public partial class VaultSwitcher
         LoadVaults();
     }
 
-    private void RegisterVaultCaller(object sender, RoutedEventArgs e)
-    {
-        RegisterVault();
-    }
+    private void CreateNewVaultCaller(object sender, RoutedEventArgs e) => CreateNewVault();
+    
+    private void RegisterVaultCaller(object sender, RoutedEventArgs e) => RegisterVault();
 
     private void RemoveVault(object sender, RoutedEventArgs _)
     {
