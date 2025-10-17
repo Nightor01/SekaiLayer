@@ -13,7 +13,7 @@ namespace SekaiLayer;
 /// </summary>
 public partial class App
 {
-    public readonly VaultSwitcher? VaultManager;
+    private readonly VaultSwitcher? _vaultSwitcher;
     private readonly Dictionary<string, VaultWindow> _openWindows = [];
     private readonly FileManager? _fileManager;
     private const string _settingsPath = "settings.json";
@@ -34,11 +34,25 @@ public partial class App
             return;
         }
         
-        VaultManager = new(_fileManager);
+        _vaultSwitcher = new(_fileManager);
         _notifyIcon = (TaskbarIcon)Current.FindResource("NotifyIcon")!;
-        NotifyIconViewModel.ExitApplicationEvent += OnExitApplicationEvent;
+        SubscribeToNotifyIcon();
         
-        SubscribeVaultManagerEvents();
+        SubscribeToVaultManagerEvents();
+    }
+
+    private void SubscribeToNotifyIcon()
+    {
+        NotifyIconViewModel.ExitApplicationEvent += OnExitApplicationEvent;
+        NotifyIconViewModel.ShowWindowEvent += NotifyIconViewModelOnShowWindowEvent;
+        NotifyIconViewModel.CreateNewVaultEvent += NotifyIconViewModelOnCreateNewVaultEvent;
+    }
+
+    private void UnsubscribeToNotifyIcon()
+    {
+        NotifyIconViewModel.ExitApplicationEvent -= OnExitApplicationEvent;
+        NotifyIconViewModel.ShowWindowEvent -= NotifyIconViewModelOnShowWindowEvent;
+        NotifyIconViewModel.CreateNewVaultEvent -= NotifyIconViewModelOnCreateNewVaultEvent;
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -48,26 +62,26 @@ public partial class App
         if (_notifyIcon is not null && _notifyIcon.IsCreated)
         {
             _notifyIcon?.Dispose();
-            NotifyIconViewModel.ExitApplicationEvent -= OnExitApplicationEvent;
+            UnsubscribeToNotifyIcon();
         }
     }
 
-    private void SubscribeVaultManagerEvents()
+    private void SubscribeToVaultManagerEvents()
     {
-        VaultManager!.OpenWindowEvent += OpenVaultWindow;
-        VaultManager.CreatedNewWindowEvent += CreatedNewVaultWindow;
-        VaultManager.RemoveWindowEvent += RemoveVaultWindow;
-        VaultManager.DeleteWindowEvent += DeleteVaultWindow;
-        VaultManager.Closing += VaultManagerOnClosing;
+        _vaultSwitcher!.OpenWindowEvent += OpenVaultWindow;
+        _vaultSwitcher.CreatedNewWindowEvent += CreatedNewVaultWindow;
+        _vaultSwitcher.RemoveWindowEvent += RemoveVaultWindow;
+        _vaultSwitcher.DeleteWindowEvent += DeleteVaultWindow;
+        _vaultSwitcher.Closing += VaultSwitcherOnClosing;
     }
     
-    private void UnsubscribeVaultManagerEvents()
+    private void UnsubscribeToVaultManagerEvents()
     {
-        VaultManager!.OpenWindowEvent -= OpenVaultWindow;
-        VaultManager.CreatedNewWindowEvent -= CreatedNewVaultWindow;
-        VaultManager.RemoveWindowEvent -= RemoveVaultWindow;
-        VaultManager.DeleteWindowEvent -= DeleteVaultWindow;
-        VaultManager.Closing -= VaultManagerOnClosing;
+        _vaultSwitcher!.OpenWindowEvent -= OpenVaultWindow;
+        _vaultSwitcher.CreatedNewWindowEvent -= CreatedNewVaultWindow;
+        _vaultSwitcher.RemoveWindowEvent -= RemoveVaultWindow;
+        _vaultSwitcher.DeleteWindowEvent -= DeleteVaultWindow;
+        _vaultSwitcher.Closing -= VaultSwitcherOnClosing;
     }
     
     private void OnExitApplicationEvent(object? sender, EventArgs e)
@@ -78,7 +92,7 @@ public partial class App
             return;
         }
         
-        MessageBoxResult result = MessageBox.Show(VaultManager!, "You have some vaults open now.\n"
+        MessageBoxResult result = MessageBox.Show(_vaultSwitcher!, "You have some vaults open now.\n"
             + "Are you certain you want to quit the application now?", "Warning",
             MessageBoxButton.YesNo, MessageBoxImage.Warning,  MessageBoxResult.No
             );
@@ -88,27 +102,40 @@ public partial class App
             Current.Shutdown();
         }
     }
-
-    private void VaultManagerOnClosing(object? sender, CancelEventArgs e)
+    
+    private void NotifyIconViewModelOnCreateNewVaultEvent(object? sender, EventArgs e)
     {
-        UnsubscribeVaultManagerEvents();
+        // TODO: This is a strange way to go about it
+        _vaultSwitcher!.CreateNewVault();
+    }
+
+    private void NotifyIconViewModelOnShowWindowEvent(object? sender, EventArgs e)
+    {
+        _vaultSwitcher!.Show();
+        _vaultSwitcher.WindowState = WindowState.Normal;
+        _vaultSwitcher.Activate();
+    }
+
+    private void VaultSwitcherOnClosing(object? sender, CancelEventArgs e)
+    {
+        UnsubscribeToVaultManagerEvents();
     }
 
     private void App_Startup(object sender, StartupEventArgs e)
     {
         // TODO: Just return?
-        if (VaultManager is null || _fileManager is null || _notifyIcon is null)
+        if (_vaultSwitcher is null || _fileManager is null || _notifyIcon is null)
             return;
         
         bool startMinimized = e.Args.Contains("--minimized") || _fileManager.AppSettings.StartMinimized;
 
         if (startMinimized)
         {
-            VaultManager.Hide();
+            _vaultSwitcher.Hide();
         }
         else
         {
-            VaultManager!.Show();
+            _vaultSwitcher!.Show();
         }
         
         _notifyIcon!.ForceCreate();

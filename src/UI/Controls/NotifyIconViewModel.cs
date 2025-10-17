@@ -6,20 +6,14 @@ namespace SekaiLayer.UI.Controls;
 
 public partial class NotifyIconViewModel : ObservableObject
 {
-    // TODO: Must it be static?
     public static event EventHandler ExitApplicationEvent = delegate { };
+    public static event EventHandler ShowWindowEvent = delegate { };
+    public static event EventHandler CreateNewVaultEvent = delegate { };
 
     [RelayCommand]
     private void ShowWindow()
     {
-        var app = (App)Application.Current;
-
-        if (app.VaultManager is null)
-            return;
-        
-        app.VaultManager.Show();
-        app.VaultManager.WindowState = WindowState.Normal;
-        app.VaultManager.Activate();
+        ShowWindowEvent(this, EventArgs.Empty);
     }
     
     [RelayCommand]
@@ -31,12 +25,6 @@ public partial class NotifyIconViewModel : ObservableObject
     [RelayCommand]
     private void CreateNewVault()
     {
-        var app = (App)Application.Current;
-
-        if (app.VaultManager is null)
-            return;
-
-        // TODO: This is a strange way to go about it
-        app.VaultManager.CreateNewVault();
+        CreateNewVaultEvent(this, EventArgs.Empty);
     }
 }
