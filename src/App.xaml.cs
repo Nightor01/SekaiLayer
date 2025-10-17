@@ -13,9 +13,9 @@ namespace SekaiLayer;
 /// </summary>
 public partial class App
 {
-    private readonly VaultSwitcher? _vaultSwitcher;
+    private readonly VaultSwitcher _vaultSwitcher;
     private readonly Dictionary<string, VaultWindow> _openWindows = [];
-    private readonly FileManager? _fileManager;
+    private readonly FileManager _fileManager;
     private const string _settingsPath = "settings.json";
     private readonly TaskbarIcon? _notifyIcon;
 
@@ -30,6 +30,8 @@ public partial class App
         catch (FileManagerException e)
         {
             Dialogues.FileManagerError(e.Message);
+            _fileManager = null!;
+            _vaultSwitcher = null!;
             Current.Shutdown();
             return;
         }
@@ -39,6 +41,9 @@ public partial class App
         SubscribeToNotifyIcon();
         
         SubscribeToVaultManagerEvents();
+        
+        // Can only be done when nothing failed
+        Startup += App_Startup;
     }
 
     private void SubscribeToNotifyIcon()
@@ -68,7 +73,7 @@ public partial class App
 
     private void SubscribeToVaultManagerEvents()
     {
-        _vaultSwitcher!.OpenWindowEvent += OpenVaultWindow;
+        _vaultSwitcher.OpenWindowEvent += OpenVaultWindow;
         _vaultSwitcher.CreatedNewWindowEvent += CreatedNewVaultWindow;
         _vaultSwitcher.RemoveWindowEvent += RemoveVaultWindow;
         _vaultSwitcher.DeleteWindowEvent += DeleteVaultWindow;
@@ -77,7 +82,7 @@ public partial class App
     
     private void UnsubscribeToVaultManagerEvents()
     {
-        _vaultSwitcher!.OpenWindowEvent -= OpenVaultWindow;
+        _vaultSwitcher.OpenWindowEvent -= OpenVaultWindow;
         _vaultSwitcher.CreatedNewWindowEvent -= CreatedNewVaultWindow;
         _vaultSwitcher.RemoveWindowEvent -= RemoveVaultWindow;
         _vaultSwitcher.DeleteWindowEvent -= DeleteVaultWindow;
@@ -92,7 +97,7 @@ public partial class App
             return;
         }
         
-        MessageBoxResult result = MessageBox.Show(_vaultSwitcher!, "You have some vaults open now.\n"
+        MessageBoxResult result = MessageBox.Show(_vaultSwitcher, "You have some vaults open now.\n"
             + "Are you certain you want to quit the application now?", "Warning",
             MessageBoxButton.YesNo, MessageBoxImage.Warning,  MessageBoxResult.No
             );
@@ -106,12 +111,12 @@ public partial class App
     private void NotifyIconViewModelOnCreateNewVaultEvent(object? sender, EventArgs e)
     {
         // TODO: This is a strange way to go about it
-        _vaultSwitcher!.CreateNewVault();
+        _vaultSwitcher.CreateNewVault();
     }
 
     private void NotifyIconViewModelOnShowWindowEvent(object? sender, EventArgs e)
     {
-        _vaultSwitcher!.Show();
+        _vaultSwitcher.Show();
         _vaultSwitcher.WindowState = WindowState.Normal;
         _vaultSwitcher.Activate();
     }
@@ -123,10 +128,6 @@ public partial class App
 
     private void App_Startup(object sender, StartupEventArgs e)
     {
-        // TODO: Just return?
-        if (_vaultSwitcher is null || _fileManager is null || _notifyIcon is null)
-            return;
-        
         bool startMinimized = e.Args.Contains("--minimized") || _fileManager.AppSettings.StartMinimized;
 
         if (startMinimized)
@@ -135,7 +136,7 @@ public partial class App
         }
         else
         {
-            _vaultSwitcher!.Show();
+            _vaultSwitcher.Show();
         }
         
         _notifyIcon!.ForceCreate();
@@ -160,7 +161,7 @@ public partial class App
     {
         try
         {
-            _fileManager!.CreateVault(e.Entry);
+            _fileManager.CreateVault(e.Entry);
         }
         catch (FileManagerException ex)
         {
@@ -175,7 +176,7 @@ public partial class App
     {
         try
         {
-            _fileManager!.RemoveVault(e.WindowName);
+            _fileManager.RemoveVault(e.WindowName);
         }
         catch (FileManagerException ex)
         {
@@ -187,7 +188,7 @@ public partial class App
     {
         try
         {
-            _fileManager!.DeleteVault(e.WindowName);
+            _fileManager.DeleteVault(e.WindowName);
         }
         catch (FileManagerException ex)
         {
@@ -200,7 +201,7 @@ public partial class App
         VaultWindow window;
         try
         {
-            window = new(_fileManager!.GetEntry(name));
+            window = new(_fileManager.GetEntry(name));
         }
         catch (FileManagerException e)
         {
