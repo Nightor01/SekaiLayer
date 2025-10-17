@@ -16,13 +16,32 @@
         
         <DockPanel Grid.Row="0" Width="{Binding ElementName=Window, Path=Width}">
             <TextBlock DockPanel.Dock="Left" VerticalAlignment="Top" Margin="5, 5, 0, 0"
-                       x:Name="NameTextBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>    
+                       x:Name="NameTextBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/> 
             <Button DockPanel.Dock="Right" Width="25" Height="25" HorizontalAlignment="Right"
-                    VerticalAlignment="Top" Margin="5"
-                    BorderBrush="Transparent" Background="Transparent" x:Name="RemoveButton"
+                    VerticalAlignment="Top" Margin="5" 
+                    BorderBrush="Transparent" x:Name="RemoveButton"
                     Click="RemoveButton_OnClick" ToolTip="Remove Vault">
                 <Image Width="{Binding ElementName=btnRemove, Path=Width}"
                        Source="{StaticResource DiRemove}"/>
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="100">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF0000"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
         </DockPanel>
         
