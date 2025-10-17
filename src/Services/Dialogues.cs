@@ -11,4 +11,12 @@ public static class Dialogues
             "Error", MessageBoxButton.OK, MessageBoxImage.Error
             );
     }
+
+    public static void VaultManagerError(string vaultName, string message)
+    {
+        MessageBox.Show($"{Resources.AppTitle} - {vaultName} " 
+            + $"experienced problems with vault's file management.\nError:" + message, 
+            "Error", MessageBoxButton.OK, MessageBoxImage.Error
+        );
+    }
 }

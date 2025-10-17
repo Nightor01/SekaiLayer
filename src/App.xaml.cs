@@ -159,13 +159,15 @@ public partial class App
 
     private void CreatedNewVaultWindow(object sender, CreateVaultEventArgs e)
     {
+        string vaultName = e.Entry.Name;
+        
         try
         {
             _fileManager.CreateVault(e.Entry);
 
             if (e.CreateFiles)
             {
-                // TODO Prepare vault
+                VaultManager.PrepareVault(e.Entry);
             }
         }
         catch (FileManagerException ex)
@@ -173,31 +175,59 @@ public partial class App
             Dialogues.FileManagerError(ex.Message);
             return;
         }
+        catch (VaultManagerException ex)
+        {
+            Dialogues.VaultManagerError(vaultName, ex.Message);
+            return;
+        }
         
-        StartVaultWindow(e.Entry.Name);
+        StartVaultWindow(vaultName);
     }
 
-    private void RemoveVaultWindow(object sender, WindowEventArgs e)
+    private void ShowRemoveWindowMessage(string name)
     {
+        MessageBox.Show(_vaultSwitcher, $"Please exit the working window `{name}` "
+            + "before removing the vault", "Stop", MessageBoxButton.OK, MessageBoxImage.Stop
+            );
+    }
+
+    private bool RemoveVaultWindowImplementation(string name)
+    {
+        if (_openWindows.ContainsKey(name))
+        {
+            ShowRemoveWindowMessage(name);
+            return false;
+        }
+        
         try
         {
-            _fileManager.RemoveVault(e.WindowName);
+            _fileManager.RemoveVault(name);
         }
         catch (FileManagerException ex)
         {
             Dialogues.FileManagerError(ex.Message);
+            return false;
         }
+
+        return true;
     }
+    
+    private void RemoveVaultWindow(object sender, WindowEventArgs e) => RemoveVaultWindowImplementation(e.WindowName);
 
     private void DeleteVaultWindow(object sender, WindowEventArgs e)
     {
+        var entry = _fileManager.GetEntry(e.WindowName);
+
+        if (!RemoveVaultWindowImplementation(e.WindowName))
+            return;
+        
         try
         {
-            _fileManager.DeleteVault(e.WindowName);
+            VaultManager.RemoveVaultFiles(entry);
         }
-        catch (FileManagerException ex)
+        catch (VaultManagerException ex)
         {
-            Dialogues.FileManagerError(ex.Message);
+            Dialogues.VaultManagerError(e.WindowName, ex.Message);
         }
     }
 
@@ -206,7 +236,8 @@ public partial class App
         VaultWindow window;
         try
         {
-            window = new(_fileManager.GetEntry(name));
+            var manager = new VaultManager(_fileManager.GetEntry(name));
+            window = new(manager);
         }
         catch (FileManagerException e)
         {

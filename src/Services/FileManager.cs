@@ -74,13 +74,6 @@ public class FileManager
         WriteSettings(_globalSettings);
     }
 
-    public void DeleteVault(string name)
-    {
-        // TODO: Delete files
-        
-        RemoveVault(name);
-    }
-
     /// <exception cref="FileManagerException"></exception>
     private void WriteSettings(GlobalSettings settings)
     {
