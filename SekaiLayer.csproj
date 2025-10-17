@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="assets\" />
-    <Folder Include="docs\" />
   </ItemGroup>
 
   <ItemGroup>
