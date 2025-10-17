@@ -16,6 +16,7 @@ public delegate void WindowEventHandler(object sender, WindowEventArgs e);
 public class CreateVaultEventArgs : EventArgs
 {
     public required VaultEntry Entry { get; init; }
+    public required bool CreateFiles { get; init; }
 }
 
 public delegate void CreateVaultEventHandler(object sender, CreateVaultEventArgs e);
@@ -128,10 +129,9 @@ public partial class VaultSwitcher
 
         CreatedNewWindowEvent(this, new CreateVaultEventArgs()
         {
-            Entry = vaultConfig
+            Entry = vaultConfig,
+            CreateFiles = true
         });
-        
-        // TODO: Prepare vault
     }
 
     private void RegisterVault()
@@ -142,7 +142,8 @@ public partial class VaultSwitcher
 
         CreatedNewWindowEvent(this, new CreateVaultEventArgs()
         {
-            Entry = dialog.VaultConfig!
+            Entry = dialog.VaultConfig!,
+            CreateFiles = false
         });
         
         Hide();

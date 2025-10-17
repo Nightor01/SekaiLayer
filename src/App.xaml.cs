@@ -162,6 +162,11 @@ public partial class App
         try
         {
             _fileManager.CreateVault(e.Entry);
+
+            if (e.CreateFiles)
+            {
+                // TODO Prepare vault
+            }
         }
         catch (FileManagerException ex)
         {
