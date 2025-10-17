@@ -4,7 +4,7 @@ namespace SekaiLayer.UI.Windows;
 
 public partial class VaultWindow
 {
-    private VaultEntry _entry;
+    private readonly VaultEntry _entry;
     public string VaultPath => _entry.Path;
     public string VaultName => _entry.Name;
     

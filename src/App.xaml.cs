@@ -225,4 +225,3 @@ public partial class App
         _openWindows.Remove(window.VaultName);
     }
 }
-
