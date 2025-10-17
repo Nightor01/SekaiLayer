@@ -30,6 +30,8 @@ public partial class VaultSwitcher
     public event WindowEventHandler OpenWindowEvent = delegate { }; 
     public event WindowEventHandler RemoveWindowEvent = delegate { };
     public event WindowEventHandler DeleteWindowEvent = delegate { };
+    public event EventHandler CreateNewVaultEvent = delegate { };
+    public event EventHandler RegisterNewVaultEvent = delegate { };
     
     private readonly FileManager _fileManager;
     
@@ -116,37 +118,15 @@ public partial class VaultSwitcher
 
     public void CreateNewVault()
     {
-        var dialog = new VaultSetupDialog();
-        if (dialog.ShowDialog() == false)
-            return;
-
-        var vaultConfig = new VaultEntry()
-        {
-            Name = dialog.VaultConfig!.Name,
-            Path = dialog.VaultConfig!.Path + Name,
-            Encryption = dialog.VaultConfig!.Encryption
-        };
-
-        CreatedNewWindowEvent(this, new CreateVaultEventArgs()
-        {
-            Entry = vaultConfig,
-            CreateFiles = true
-        });
+        CreateNewVaultEvent(this, EventArgs.Empty);
+        
+        LoadVaults();
     }
 
     private void RegisterVault()
     {
-        var dialog = new VaultSetupDialog();
-        if (dialog.ShowDialog() == false)
-            return;
-
-        CreatedNewWindowEvent(this, new CreateVaultEventArgs()
-        {
-            Entry = dialog.VaultConfig!,
-            CreateFiles = false
-        });
+        RegisterNewVaultEvent(this, EventArgs.Empty);
         
-        Hide();
         LoadVaults();
     }
 

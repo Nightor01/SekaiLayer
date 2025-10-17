@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using H.NotifyIcon;
 using SekaiLayer.Services;
+using SekaiLayer.Types;
 using SekaiLayer.Types.Exceptions;
 using SekaiLayer.UI.Controls;
 using SekaiLayer.UI.Windows;
@@ -50,14 +52,14 @@ public partial class App
     {
         NotifyIconViewModel.ExitApplicationEvent += OnExitApplicationEvent;
         NotifyIconViewModel.ShowWindowEvent += NotifyIconViewModelOnShowWindowEvent;
-        NotifyIconViewModel.CreateNewVaultEvent += NotifyIconViewModelOnCreateNewVaultEvent;
+        NotifyIconViewModel.CreateNewVaultEvent += OnCreateNewVaultEvent;
     }
 
     private void UnsubscribeToNotifyIcon()
     {
         NotifyIconViewModel.ExitApplicationEvent -= OnExitApplicationEvent;
         NotifyIconViewModel.ShowWindowEvent -= NotifyIconViewModelOnShowWindowEvent;
-        NotifyIconViewModel.CreateNewVaultEvent -= NotifyIconViewModelOnCreateNewVaultEvent;
+        NotifyIconViewModel.CreateNewVaultEvent -= OnCreateNewVaultEvent;
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -74,19 +76,53 @@ public partial class App
     private void SubscribeToVaultManagerEvents()
     {
         _vaultSwitcher.OpenWindowEvent += OpenVaultWindow;
-        _vaultSwitcher.CreatedNewWindowEvent += CreatedNewVaultWindow;
         _vaultSwitcher.RemoveWindowEvent += RemoveVaultWindow;
         _vaultSwitcher.DeleteWindowEvent += DeleteVaultWindow;
         _vaultSwitcher.Closing += VaultSwitcherOnClosing;
+        _vaultSwitcher.CreateNewVaultEvent += OnCreateNewVaultEvent;
+        _vaultSwitcher.RegisterNewVaultEvent += OnRegisterNewVaultEvent;
     }
     
     private void UnsubscribeToVaultManagerEvents()
     {
         _vaultSwitcher.OpenWindowEvent -= OpenVaultWindow;
-        _vaultSwitcher.CreatedNewWindowEvent -= CreatedNewVaultWindow;
         _vaultSwitcher.RemoveWindowEvent -= RemoveVaultWindow;
         _vaultSwitcher.DeleteWindowEvent -= DeleteVaultWindow;
         _vaultSwitcher.Closing -= VaultSwitcherOnClosing;
+        _vaultSwitcher.CreateNewVaultEvent -= OnCreateNewVaultEvent;
+        _vaultSwitcher.RegisterNewVaultEvent -= OnRegisterNewVaultEvent;
+    }
+    
+    private void OnRegisterNewVaultEvent(object? sender, EventArgs e)
+    {
+        var dialog = new VaultSetupDialog();
+        if (dialog.ShowDialog() == false)
+            return;
+
+        CreateNewVaultWindow(dialog.VaultConfig!, false);
+        
+        _vaultSwitcher.Hide();
+    }
+    
+    void OnCreateNewVaultEvent(object? sender, EventArgs e)
+    {
+        var dialog = new VaultSetupDialog();
+        if (dialog.ShowDialog() == false)
+            return;
+
+        var name = dialog.VaultConfig!.Name;
+        // TODO resolve paths having both / and \
+        var path = Path.Combine(dialog.VaultConfig!.Path, name);
+        var encryption = dialog.VaultConfig!.Encryption;
+        
+        CreateNewVaultWindow(new VaultEntry()
+        {
+            Name = name,
+            Path = path,
+            Encryption = encryption
+        }, true);
+        
+        _vaultSwitcher.Hide();
     }
     
     private void OnExitApplicationEvent(object? sender, EventArgs e)
@@ -106,12 +142,6 @@ public partial class App
         {
             Current.Shutdown();
         }
-    }
-    
-    private void NotifyIconViewModelOnCreateNewVaultEvent(object? sender, EventArgs e)
-    {
-        // TODO: This is a strange way to go about it
-        _vaultSwitcher.CreateNewVault();
     }
 
     private void NotifyIconViewModelOnShowWindowEvent(object? sender, EventArgs e)
@@ -157,17 +187,17 @@ public partial class App
         }
     }
 
-    private void CreatedNewVaultWindow(object sender, CreateVaultEventArgs e)
+    private void CreateNewVaultWindow(VaultEntry entry, bool createFiles)
     {
-        string vaultName = e.Entry.Name;
+        string vaultName = entry.Name;
         
         try
         {
-            _fileManager.CreateVault(e.Entry);
+            _fileManager.CreateVault(entry);
 
-            if (e.CreateFiles)
+            if (createFiles)
             {
-                VaultManager.PrepareVault(e.Entry);
+                VaultManager.PrepareVault(entry);
             }
         }
         catch (FileManagerException ex)
