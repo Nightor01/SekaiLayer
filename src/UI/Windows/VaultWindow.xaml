@@ -33,7 +33,7 @@
         
         <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                       Background="Black" Height="2" VerticalAlignment="Center"
-                      HorizontalAlignment="Stretch"/>
+                      HorizontalAlignment="Stretch" Margin="0"/>
         
         <TreeView Grid.Row="2" Grid.Column="0" x:Name="TreeView" 
                   Margin="1" BorderThickness="0" />
