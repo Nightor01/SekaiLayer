@@ -13,7 +13,7 @@ public class WindowEventArgs : EventArgs
 public delegate void WindowEventHandler(object sender, WindowEventArgs e);
 
 /// <summary>
-/// Interaction logic for VaultManager.xaml
+/// Interaction logic for VaultSwitcher.xaml
 /// </summary>
 public partial class VaultSwitcher
 {
