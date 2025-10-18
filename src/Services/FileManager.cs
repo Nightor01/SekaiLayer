@@ -9,10 +9,7 @@ namespace SekaiLayer.Services;
 
 public class FileManager
 {
-    private static readonly JsonSerializerOptions _options = new()
-    {
-        WriteIndented = true,
-    };
+    private static readonly JsonSerializerOptions _options = GlobalOptions.JsonSerializer();
     
     private readonly string _settingsPath;
     private readonly GlobalSettings _globalSettings;

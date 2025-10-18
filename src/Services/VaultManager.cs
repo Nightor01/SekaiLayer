@@ -11,12 +11,14 @@ public class VaultManager
     private readonly VaultEntry _entry;
     public string VaultPath => _entry.Path;
     public string VaultName => _entry.Name;
+    
+    public VaultConfiguration Configuration;
 
+    private static readonly JsonSerializerOptions _options = GlobalOptions.JsonSerializer();
     private const string _configDir = "Config";
     private static readonly string _configFile = Path.Combine(_configDir, "config.json");
     private const string _assetsDir = "Assets";
     private const string _worldsDir = "Worlds";
-    private VaultConfiguration _config;
     
     /// <exception cref="VaultManagerException"></exception>
     public VaultManager(VaultEntry entry)
@@ -28,7 +30,7 @@ public class VaultManager
             throw new VaultManagerException("Vault files do not have the correct structure.");
         }
 
-        _config = GetVaultConfiguration();
+        Configuration = GetVaultConfiguration();
     }
     
     /// <exception cref="VaultManagerException"></exception> 
@@ -117,7 +119,7 @@ public class VaultManager
             {
                 CollaborationEnabled = false
             };
-            string json = JsonSerializer.Serialize(defaultConfiguration);
+            string json = JsonSerializer.Serialize(defaultConfiguration, _options);
             File.WriteAllText(GetConfigFilePath(path), json);
         }
         catch (Exception e) when (e
