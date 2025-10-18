@@ -1,5 +1,4 @@
 ﻿using SekaiLayer.Services;
-using SekaiLayer.Types;
 
 namespace SekaiLayer.UI.Windows;
 
