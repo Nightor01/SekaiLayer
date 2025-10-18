@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Security;
 using System.Text.Json;
+using SekaiLayer.Extensions;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Exceptions;
 
@@ -36,26 +37,44 @@ public class VaultManager
     /// <exception cref="VaultManagerException"></exception> 
     public void AddWorld(string world)
     {
+        if (_config.Worlds.Contains(x => x.Name == world))
+        {
+            throw new VaultManagerException("A world with this name already exists.");
+        }
+        
         AddWorldDirectory(world);
         
-        _config.Worlds.Add(world);   
+        _config.Worlds.Add(new()
+        {
+            Name = world,
+            Id = Guid.CreateVersion7()
+        });   
         
         SaveConfiguration();
     }
 
-    public IReadOnlyList<string> GetWorldNames() => _config.Worlds;
+    public IReadOnlyList<VaultObjectIdentifier> GetWorlds() => _config.Worlds;
 
     /// <exception cref="VaultManagerException"></exception>
     public void AddAssetGroup(string group)
     {
+        if (_config.AssetGroups.Contains(x => x.Name == group))
+        {
+            throw new VaultManagerException("An asset group with this name already exists.");
+        }
+        
         AddAssetGroupDirectory(group);
         
-        _config.AssetGroups.Add(group);
+        _config.AssetGroups.Add(new()
+        {
+            Name = group,
+            Id = Guid.CreateVersion7()
+        });
         
         SaveConfiguration();
     }
     
-    public IReadOnlyList<string> GetAssetGroupNames() => _config.AssetGroups;
+    public IReadOnlyList<VaultObjectIdentifier> GetAssetGroups() => _config.AssetGroups;
     
     /// <exception cref="VaultManagerException"></exception> 
     public static void PrepareVault(VaultEntry entry)

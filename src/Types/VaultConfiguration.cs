@@ -3,6 +3,6 @@
 public class VaultConfiguration
 {
     public required bool CollaborationEnabled { get; set; }
-    public List<string> AssetGroups { get; set; } = [];
-    public List<string> Worlds { get; set; } = [];
+    public List<VaultObjectIdentifier> AssetGroups { get; set; } = [];
+    public List<VaultObjectIdentifier> Worlds { get; set; } = [];
 }

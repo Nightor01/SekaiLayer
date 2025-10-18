@@ -4,8 +4,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="GlobalResourceDictionary.xaml"/>
-                <ResourceDictionary Source="/src/UI/Controls/NotifyIconResources.xaml"/>
+                <ResourceDictionary Source="GlobalResourceDictionary.xaml" />
+                <ResourceDictionary Source="/src/UI/Controls/NotifyIconResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
