@@ -193,12 +193,16 @@ public partial class App
         
         try
         {
-            _fileManager.CreateVault(entry);
-
             if (createFiles)
             {
                 VaultManager.PrepareVault(entry);
             }
+            else if(VaultManager.CheckVaultFiles(entry))
+            {
+                throw new VaultManagerException("Vault files are not correct and vault cannot be registered.");
+            }
+            
+            _fileManager.CreateVault(entry);
         }
         catch (FileManagerException ex)
         {
