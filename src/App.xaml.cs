@@ -181,10 +181,12 @@ public partial class App
             window.Show();
             window.Activate();
         }
-        else
+        else if(!StartVaultWindow(windowName))
         {
-            StartVaultWindow(windowName);
+            return;
         }
+        
+        _vaultSwitcher.Hide();
     }
 
     private void CreateNewVaultWindow(VaultEntry entry, bool createFiles)
@@ -265,7 +267,7 @@ public partial class App
         }
     }
 
-    private void StartVaultWindow(string name)
+    private bool StartVaultWindow(string name)
     {
         VaultWindow window;
         try
@@ -276,12 +278,12 @@ public partial class App
         catch (FileManagerException e)
         {
             MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
+            return false;
         }
         catch (VaultManagerException e)
         {
             Dialogues.VaultManagerError(name, e.Message);
-            return;
+            return false;
         }
         
         window.Closed += WindowOnClosed;
@@ -289,6 +291,8 @@ public partial class App
         window.Show();
         window.Activate();
         _openWindows[name] = window;
+
+        return true;
     }
 
     private void WindowOnClosed(object? sender, EventArgs e)

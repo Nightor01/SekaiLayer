@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using SekaiLayer.Services;
-using SekaiLayer.Types;
 using SekaiLayer.UI.Controls;
 
 namespace SekaiLayer.UI.Windows;
@@ -13,20 +12,11 @@ public class WindowEventArgs : EventArgs
 
 public delegate void WindowEventHandler(object sender, WindowEventArgs e);
 
-public class CreateVaultEventArgs : EventArgs
-{
-    public required VaultEntry Entry { get; init; }
-    public required bool CreateFiles { get; init; }
-}
-
-public delegate void CreateVaultEventHandler(object sender, CreateVaultEventArgs e);
-
 /// <summary>
 /// Interaction logic for VaultManager.xaml
 /// </summary>
 public partial class VaultSwitcher
 {
-    public event CreateVaultEventHandler CreatedNewWindowEvent = delegate { };
     public event WindowEventHandler OpenWindowEvent = delegate { }; 
     public event WindowEventHandler RemoveWindowEvent = delegate { };
     public event WindowEventHandler DeleteWindowEvent = delegate { };
@@ -77,7 +67,7 @@ public partial class VaultSwitcher
         
         MessageBoxResult result = MessageBox.Show("Do you also want to delete the files?",
              $"{SekaiLayer.Resources.AppTitle}", MessageBoxButton.YesNoCancel, MessageBoxImage.Question,
-             MessageBoxResult.No 
+             MessageBoxResult.Cancel
              );
 
         if (result == MessageBoxResult.Cancel) return;
@@ -112,11 +102,9 @@ public partial class VaultSwitcher
         {
             WindowName = display.VaultName
         });
-        
-        Hide();
     }
 
-    public void CreateNewVault()
+    private void CreateNewVault()
     {
         CreateNewVaultEvent(this, EventArgs.Empty);
         
