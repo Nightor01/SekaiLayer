@@ -32,6 +32,19 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         
+        <Grid Grid.Row="0" Column="0" ColumnSpan="3" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <GroupBox Grid.Column="0" Header="Resources">
+            </GroupBox>
+            
+            <Border Grid.Column="1" Background="LightSlateGray" />
+        </Grid>
+        
         <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                       Background="Black" Height="2" VerticalAlignment="Center"
                       HorizontalAlignment="Stretch" Margin="0"/>
