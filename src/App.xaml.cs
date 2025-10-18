@@ -278,6 +278,11 @@ public partial class App
             MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
+        catch (VaultManagerException e)
+        {
+            Dialogues.VaultManagerError(name, e.Message);
+            return;
+        }
         
         window.Closed += WindowOnClosed;
 

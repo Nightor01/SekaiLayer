@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Security;
+using System.Text.Json;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Exceptions;
 
@@ -14,15 +16,19 @@ public class VaultManager
     private static readonly string _configFile = Path.Combine(_configDir, "config.json");
     private const string _assetsDir = "Assets";
     private const string _worldsDir = "Worlds";
+    private VaultConfiguration _config;
     
+    /// <exception cref="VaultManagerException"></exception>
     public VaultManager(VaultEntry entry)
     {
         _entry = entry;
 
         if (!CheckVaultFiles(entry))
         {
-            // TODO react
+            throw new VaultManagerException("Vault files do not have the correct structure.");
         }
+
+        _config = GetVaultConfiguration();
     }
     
     /// <exception cref="VaultManagerException"></exception> 
@@ -35,16 +41,12 @@ public class VaultManager
                 Directory.CreateDirectory(dir);
             }
 
-            foreach (var file in GetVaultFiles(entry.Path))
-            {
-                File.Create(file).Close();
-            }
+            InitFiles();
         }
         catch (Exception e) when (e
             is UnauthorizedAccessException
             or ArgumentException
             or PathTooLongException
-            or DirectoryNotFoundException
             or IOException
             or NotSupportedException
         ) {
@@ -75,6 +77,60 @@ public class VaultManager
                    .Aggregate(true, (current, dir) => current && Directory.Exists(dir)) 
                && GetVaultFiles(entry.Path)
                    .Aggregate(true, (current, file) => current && File.Exists(file));
+        
+        // TODO recursive checking of individual worlds and assets
+    }
+
+    private VaultConfiguration GetVaultConfiguration()
+    {
+        VaultConfiguration? configuration;
+        
+        try
+        {
+            string contents = File.ReadAllText(_configFile);
+            configuration = JsonSerializer.Deserialize<VaultConfiguration>(contents);
+
+            if (configuration is null)
+                throw new VaultManagerException("Vault could not be deserialized from JSON");
+        }
+        catch (Exception e) when (e
+             is ArgumentException
+             or PathTooLongException
+             or DirectoryNotFoundException
+             or IOException
+             or UnauthorizedAccessException
+             or NotSupportedException
+             or SecurityException
+             or JsonException
+        ) {
+            throw new VaultManagerException(e.Message);
+        }
+
+        return configuration;
+    }
+
+    private static void InitFiles()
+    {
+        try
+        {
+            VaultConfiguration defaultConfiguration = new ()
+            {
+                CollaborationEnabled = false
+            };
+            string json = JsonSerializer.Serialize(defaultConfiguration);
+            File.WriteAllText(_configFile, json);
+        }
+        catch (Exception e) when (e
+            is ArgumentException
+            or PathTooLongException
+            or DirectoryNotFoundException
+            or IOException
+            or UnauthorizedAccessException
+            or NotSupportedException
+            or SecurityException
+        ) {
+            throw new VaultManagerException(e.Message);
+        } 
     }
     
     private static List<string> GetVaultDirectories(string path)
