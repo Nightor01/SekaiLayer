@@ -12,7 +12,7 @@ public class VaultManager
     public string VaultPath => _entry.Path;
     public string VaultName => _entry.Name;
     
-    public VaultConfiguration Configuration;
+    private readonly VaultConfiguration _config;
 
     private static readonly JsonSerializerOptions _options = GlobalOptions.JsonSerializer();
     private const string _configDir = "Config";
@@ -30,8 +30,32 @@ public class VaultManager
             throw new VaultManagerException("Vault files do not have the correct structure.");
         }
 
-        Configuration = GetVaultConfiguration();
+        _config = GetVaultConfiguration();
     }
+
+    /// <exception cref="VaultManagerException"></exception> 
+    public void AddWorld(string world)
+    {
+        AddWorldDirectory(world);
+        
+        _config.Worlds.Add(world);   
+        
+        SaveConfiguration();
+    }
+
+    public IReadOnlyList<string> GetWorldNames() => _config.Worlds;
+
+    /// <exception cref="VaultManagerException"></exception>
+    public void AddAssetGroup(string group)
+    {
+        AddAssetGroupDirectory(group);
+        
+        _config.AssetGroups.Add(group);
+        
+        SaveConfiguration();
+    }
+    
+    public IReadOnlyList<string> GetAssetGroupNames() => _config.AssetGroups;
     
     /// <exception cref="VaultManagerException"></exception> 
     public static void PrepareVault(VaultEntry entry)
@@ -83,13 +107,14 @@ public class VaultManager
         // TODO recursive checking of individual worlds and assets
     }
 
+    /// <exception cref="VaultManagerException"></exception> 
     private VaultConfiguration GetVaultConfiguration()
     {
         VaultConfiguration? configuration;
         
         try
         {
-            string contents = File.ReadAllText(GetConfigFilePath(_entry.Path));
+            string contents = File.ReadAllText(GetConfigFilePath(VaultPath));
             configuration = JsonSerializer.Deserialize<VaultConfiguration>(contents);
 
             if (configuration is null)
@@ -111,6 +136,7 @@ public class VaultManager
         return configuration;
     }
 
+    /// <exception cref="VaultManagerException"></exception> 
     private static void InitFiles(string path)
     {
         try
@@ -134,6 +160,71 @@ public class VaultManager
             throw new VaultManagerException(e.Message);
         } 
     }
+
+    /// <exception cref="VaultManagerException"></exception> 
+    private void AddWorldDirectory(string world)
+    {
+        string directoryPath = Path.Combine(GetWorldsDirPath(VaultPath), world);
+        
+        try
+        {
+            Directory.CreateDirectory(directoryPath);
+            
+            // TODO Add more logic
+        }
+        catch (Exception e) when (e
+            is UnauthorizedAccessException
+            or ArgumentException
+            or PathTooLongException
+            or IOException
+            or NotSupportedException
+        ) {
+            throw new VaultManagerException(e.Message);
+        }
+    }
+    
+    /// <exception cref="VaultManagerException"></exception> 
+    private void AddAssetGroupDirectory(string assetGroup)
+    {
+        string directoryPath = Path.Combine(GetAssetsDirPath(VaultPath), assetGroup);
+        
+        try
+        {
+            Directory.CreateDirectory(directoryPath);
+            
+            // TODO Add more logic
+        }
+        catch (Exception e) when (e
+            is UnauthorizedAccessException
+            or ArgumentException
+            or PathTooLongException
+            or IOException
+            or NotSupportedException
+        ) {
+            throw new VaultManagerException(e.Message);
+        }
+    }
+
+    /// <exception cref="VaultManagerException"></exception> 
+    private void SaveConfiguration()
+    {
+        try
+        {
+            string json = JsonSerializer.Serialize(_config, _options);
+            File.WriteAllText(GetConfigFilePath(VaultPath), json);   
+        }
+        catch (Exception e) when (e
+            is ArgumentException
+            or PathTooLongException
+            or DirectoryNotFoundException
+            or IOException
+            or UnauthorizedAccessException
+            or NotSupportedException
+            or SecurityException
+        ) {
+            throw new VaultManagerException(e.Message);
+        }  
+    }
     
     private static List<string> GetVaultDirectories(string path)
     {
@@ -156,5 +247,15 @@ public class VaultManager
     private static string GetConfigFilePath(string path)
     {
         return Path.Combine(path, _configFile);
+    }
+
+    private static string GetWorldsDirPath(string path)
+    {
+        return Path.Combine(path, _worldsDir);
+    }
+    
+    private static string GetAssetsDirPath(string path)
+    {
+        return Path.Combine(path, _assetsDir);
     }
 }
