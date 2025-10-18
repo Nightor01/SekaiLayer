@@ -18,7 +18,10 @@ public partial class App
     private readonly VaultSwitcher _vaultSwitcher;
     private readonly Dictionary<string, VaultWindow> _openWindows = [];
     private readonly FileManager _fileManager;
-    private const string _settingsPath = "settings.json";
+    private readonly string _settingsPath = Path.Combine(
+        AppDomain.CurrentDomain.BaseDirectory,
+        "settings.json"
+        );
     private readonly TaskbarIcon? _notifyIcon;
 
     public App()
