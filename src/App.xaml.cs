@@ -99,9 +99,12 @@ public partial class App
         if (dialog.ShowDialog() == false)
             return;
 
-        CreateNewVaultWindow(dialog.VaultConfig!, false);
-        
-        _vaultSwitcher.Hide();
+        bool result = CreateNewVaultWindow(dialog.VaultConfig!, false);
+
+        if (result)
+        {
+            _vaultSwitcher.Hide();
+        }
     }
     
     void OnCreateNewVaultEvent(object? sender, EventArgs e)
@@ -115,14 +118,17 @@ public partial class App
         var path = Path.Combine(dialog.VaultConfig!.Path, name);
         var encryption = dialog.VaultConfig!.Encryption;
         
-        CreateNewVaultWindow(new VaultEntry()
+        bool result = CreateNewVaultWindow(new VaultEntry()
         {
             Name = name,
             Path = path,
             Encryption = encryption
         }, true);
-        
-        _vaultSwitcher.Hide();
+
+        if (result)
+        {
+            _vaultSwitcher.Hide();
+        }
     }
     
     private void OnExitApplicationEvent(object? sender, EventArgs e)
@@ -189,7 +195,7 @@ public partial class App
         _vaultSwitcher.Hide();
     }
 
-    private void CreateNewVaultWindow(VaultEntry entry, bool createFiles)
+    private bool CreateNewVaultWindow(VaultEntry entry, bool createFiles)
     {
         string vaultName = entry.Name;
         
@@ -209,15 +215,15 @@ public partial class App
         catch (FileManagerException ex)
         {
             Dialogues.FileManagerError(ex.Message);
-            return;
+            return false;
         }
         catch (VaultManagerException ex)
         {
             Dialogues.VaultManagerError(vaultName, ex.Message);
-            return;
+            return false;
         }
         
-        StartVaultWindow(vaultName);
+        return StartVaultWindow(vaultName);
     }
 
     private void ShowRemoveWindowMessage(string name)

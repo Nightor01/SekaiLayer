@@ -41,7 +41,7 @@ public class VaultManager
                 Directory.CreateDirectory(dir);
             }
 
-            InitFiles();
+            InitFiles(entry.Path);
         }
         catch (Exception e) when (e
             is UnauthorizedAccessException
@@ -87,7 +87,7 @@ public class VaultManager
         
         try
         {
-            string contents = File.ReadAllText(_configFile);
+            string contents = File.ReadAllText(GetConfigFilePath(_entry.Path));
             configuration = JsonSerializer.Deserialize<VaultConfiguration>(contents);
 
             if (configuration is null)
@@ -109,7 +109,7 @@ public class VaultManager
         return configuration;
     }
 
-    private static void InitFiles()
+    private static void InitFiles(string path)
     {
         try
         {
@@ -118,7 +118,7 @@ public class VaultManager
                 CollaborationEnabled = false
             };
             string json = JsonSerializer.Serialize(defaultConfiguration);
-            File.WriteAllText(_configFile, json);
+            File.WriteAllText(GetConfigFilePath(path), json);
         }
         catch (Exception e) when (e
             is ArgumentException
@@ -149,5 +149,10 @@ public class VaultManager
         [
             Path.Combine(path, _configFile)
         ];
+    }
+
+    private static string GetConfigFilePath(string path)
+    {
+        return Path.Combine(path, _configFile);
     }
 }

@@ -104,23 +104,19 @@ public partial class VaultSwitcher
         });
     }
 
-    private void CreateNewVault()
+    private void CreateNewVaultCaller(object sender, RoutedEventArgs e)
     {
         CreateNewVaultEvent(this, EventArgs.Empty);
         
         LoadVaults();
     }
-
-    private void RegisterVault()
+    
+    private void RegisterVaultCaller(object sender, RoutedEventArgs e)
     {
         RegisterNewVaultEvent(this, EventArgs.Empty);
         
         LoadVaults();
     }
-
-    private void CreateNewVaultCaller(object sender, RoutedEventArgs e) => CreateNewVault();
-    
-    private void RegisterVaultCaller(object sender, RoutedEventArgs e) => RegisterVault();
 
     private void RemoveVault(object sender, RoutedEventArgs _)
     {
