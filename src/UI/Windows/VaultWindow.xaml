@@ -58,8 +58,8 @@
                                                         To="DarkSlateBlue" Duration="0:0:0.15"
                                                         BeginTime="0:0:0.01"/>
                                         <ThicknessAnimation Storyboard.TargetProperty="Margin"
-                                                        To="2 0 2 0" Duration="0:0:0.15" BeginTime="0:0:0.01" 
-                                                        FillBehavior="HoldEnd" />
+                                                            To="2 0 2 0" Duration="0:0:0.15" BeginTime="0:0:0.01" 
+                                                            FillBehavior="HoldEnd" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
@@ -72,7 +72,7 @@
                                         <ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
                                                         To="Black" Duration="0:0:0.15"/>
                                         <ThicknessAnimation Storyboard.TargetProperty="Margin"
-                                                        To="8 0 2 0" Duration="0:0:0.15" />
+                                                            To="8 0 2 0" Duration="0:0:0.15" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
