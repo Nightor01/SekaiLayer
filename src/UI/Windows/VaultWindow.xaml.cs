@@ -86,17 +86,16 @@ public partial class VaultWindow
         {
             Header = obj.Name,
             Id = obj.Id,
-            Content = new Label(){ Content = obj.Id.ToString() }
+            Content = GetContentControl(obj.Type)
         };
 
         _tabControlData.Add(tabItem);
         TabControl.SelectedIndex = 0;
-
-        // TODO Add logic
     }
 
-    private void TabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private Control GetContentControl(VaultObjectIdentifier.ObjectType type)
     {
+        return new Label() { Content = type.ToString() };
         // TODO
     }
 

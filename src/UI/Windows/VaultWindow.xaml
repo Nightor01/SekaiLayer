@@ -98,7 +98,7 @@
         
         <TabControl Grid.Row="2" Grid.Column="2" 
                     Margin="0" BorderThickness="0 1 0 0" 
-                    x:Name="TabControl" SelectionChanged="TabControl_OnSelectionChanged">
+                    x:Name="TabControl">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal"
