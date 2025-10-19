@@ -41,9 +41,16 @@
             
             <GroupBox Grid.Column="0" Header="Resources">
                 <StackPanel Orientation="Horizontal">
-                    <Button Width="50" Height="50" ToolTip="Add Resource" Click="AddResourceOnClick">
+                    <Button Width="50" Height="50" ToolTip="Import a resource" Click="AddResourceOnClick">
                         <Image Source="{StaticResource DiAddIcon}" Margin="5" />
                     </Button>
+                    <StackPanel Orientation="Vertical" Margin="5 3.5 5 3.5">
+                        <Button Content="Add Existing" Height="22.5" Margin="0 0 0 5"
+                                Click="AddExisting_OnClick"
+                                ToolTip="Adds a resource imported manually into Sekai-Layer" />
+                        <Button Content="Add Default" Height="22.5" Margin="0"
+                                Click="AddDefault_OnClick" ToolTip="Adds an asset group from app defaults" />
+                    </StackPanel>
                 </StackPanel>
             </GroupBox>
             

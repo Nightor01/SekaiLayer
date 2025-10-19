@@ -265,4 +265,14 @@ public partial class VaultWindow
     {
         return (TreeViewItem)TreeView.Items[(int)tvi]!;
     }
+
+    private void AddExisting_OnClick(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void AddDefault_OnClick(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 }
