@@ -25,5 +25,5 @@
             </GeometryDrawing>
         </DrawingGroup>
     </DrawingGroup>
-    <DrawingImage Drawing="{StaticResource Layer1}" x:Key="DiAddVault"/>
+    <DrawingImage Drawing="{StaticResource Layer1}" x:Key="DiAddIcon"/>
 </ResourceDictionary>

@@ -5,31 +5,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        ShowInTaskbar="False"
         Title="Vault Setup Dialog" Height="300" Width="350"
         Icon="{StaticResource AppIcoIcon}">
     <Window.Resources>
         <ResourceDictionary>
             <Style x:Key="ButtonBottomStyle" TargetType="Button">
-                <Setter Property="Width" Value="60"/>
-                <Setter Property="Height" Value="30"/>
-                <Setter Property="Margin" Value="10, 5"/>
+                <Setter Property="Width" Value="60" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Margin" Value="10, 5" />
             </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         
         <!-- Main -->
         <DockPanel Grid.Row="0" Height="30" Margin="10, 0">
             <Label DockPanel.Dock="Left" FontSize="14">Vault name</Label>
             <TextBox Width="200" HorizontalAlignment="Right" VerticalContentAlignment="Center"
-                     x:Name="VaultName" FontSize="14"/>
+                     x:Name="VaultName" FontSize="14" />
         </DockPanel>
         <StackPanel Grid.Row="1" Margin="10, 0">     
             <DockPanel Grid.Row="1" Height="30">

@@ -117,4 +117,16 @@ public partial class VaultWindow
             }
         }
     }
+
+    private void AddResourceOnClick(object sender, RoutedEventArgs e)
+    {
+        var dialog = new AddResourceDialog();
+        
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+        
+        // TODO
+    }
 }

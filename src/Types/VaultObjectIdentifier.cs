@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using SekaiLayer.Types.Attributes;
 
 namespace SekaiLayer.Types;
 
@@ -6,8 +7,11 @@ public class VaultObjectIdentifier
 {
     public enum ObjectType
     {
+        [VaultObjectName("Asset Group")]
         AssetGroup,
+        [VaultObjectName("Image")]
         Image,
+        [VaultObjectName("World")]
         World,
     }
     

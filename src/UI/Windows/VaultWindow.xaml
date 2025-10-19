@@ -15,7 +15,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" MinWidth="100" MaxWidth="600">
+            <ColumnDefinition Width="150" MinWidth="100" MaxWidth="600">
                 <ColumnDefinition.Style>
                     <Style TargetType="ColumnDefinition">
                         <Style.Triggers>
@@ -34,12 +34,17 @@
         
         <Grid Grid.Row="0" Column="0" ColumnSpan="3" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="210" />
                 <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             
             <GroupBox Grid.Column="0" Header="Resources">
+                <StackPanel Orientation="Horizontal">
+                    <Button Width="50" Height="50" ToolTip="Add Resource" Click="AddResourceOnClick">
+                        <Image Source="{StaticResource DiAddIcon}" Margin="5" />
+                    </Button>
+                </StackPanel>
             </GroupBox>
             
             <Border Grid.Column="1" Background="LightSlateGray" />
