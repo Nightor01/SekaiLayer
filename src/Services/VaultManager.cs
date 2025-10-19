@@ -17,8 +17,9 @@ public class VaultManager
     private readonly VaultConfiguration _config;
 
     private static readonly JsonSerializerOptions _options = GlobalOptions.JsonSerializer();
+    private const string _generalConfigFile = "config.json";
     private const string _configDir = "Config";
-    private static readonly string _configFile = Path.Combine(_configDir, "config.json");
+    private static readonly string _configFile = Path.Combine(_configDir, _generalConfigFile);
     private const string _assetsDir = "Assets";
     private const string _worldsDir = "Worlds";
     
@@ -294,7 +295,7 @@ public class VaultManager
         try
         {
             string json = JsonSerializer.Serialize(settings, _options);
-            File.WriteAllText(GetGroupAssetFilePath(VaultPath, group.Name, "config.json"), json);
+            File.WriteAllText(GetGroupAssetFilePath(VaultPath, group.Name, _generalConfigFile), json);
         }
         catch (Exception e) when (e
             is ArgumentException
@@ -312,7 +313,7 @@ public class VaultManager
     /// <exception cref="VaultManagerException"></exception>
     private List<AssetSettings> GetGroupConfig(VaultObjectIdentifier group)
     {
-        string path = GetGroupAssetFilePath(VaultPath, group.Name, "config.json");
+        string path = GetGroupAssetFilePath(VaultPath, group.Name, _generalConfigFile);
 
         if (!File.Exists(path))
             return [];
@@ -362,7 +363,6 @@ public class VaultManager
 
     private static string GetGroupAssetFilePath(string path, string group, string fileName)
     {
-        // TODO maybe add constant?
         return Path.Combine(path, _assetsDir, group, fileName);
     }
     
