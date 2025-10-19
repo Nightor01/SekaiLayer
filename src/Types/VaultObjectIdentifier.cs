@@ -13,6 +13,8 @@ public class VaultObjectIdentifier
         Image,
         [VaultObjectName("World")]
         World,
+        [VaultObjectName("Tile Map")]
+        TileMap
     }
     
     public required string Name { get; init; }

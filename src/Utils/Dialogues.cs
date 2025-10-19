@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SekaiLayer.Services;
+namespace SekaiLayer.Utils;
 
 public static class Dialogues
 {
@@ -18,5 +18,10 @@ public static class Dialogues
             + $"experienced problems with vault's file management.\nError: " + message, 
             "Error", MessageBoxButton.OK, MessageBoxImage.Error
         );
+    }
+
+    public static void AddResourceError(string message)
+    {
+        MessageBox.Show(message, "Stop", MessageBoxButton.OK, MessageBoxImage.Stop);
     }
 }

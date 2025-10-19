@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Attributes;
 using SekaiLayer.UI.Controls;
@@ -64,11 +65,13 @@ public partial class AddResourceDialog
         ContentHolder.Content = objectType switch
         {
             VaultObjectIdentifier.ObjectType.AssetGroup => new AddAssetGroupControl(),
+            VaultObjectIdentifier.ObjectType.Image => new AddImageAssetControl(),
             _ => new TextBlock()
             {
                 Text = "error: this operation is not yet supported",
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(_errorLabelThickness),
+                Foreground = Brushes.Red
             }
         };
     }

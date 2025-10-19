@@ -1,5 +1,7 @@
 ﻿using System.Windows;
+using SekaiLayer.Services;
 using SekaiLayer.Types;
+using SekaiLayer.Utils;
 
 namespace SekaiLayer.UI.Controls;
 
@@ -21,9 +23,7 @@ public partial class AddAssetGroupControl : IValidatable
             return true;
         }
 
-        MessageBox.Show("Please fill in the group name text field", "Stop",
-            MessageBoxButton.OK, MessageBoxImage.Stop 
-            );
+        Dialogues.AddResourceError("Please fill in the group name text field");
 
         return false;
     }

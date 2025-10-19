@@ -56,24 +56,7 @@ public partial class VaultSetupDialog
 
     private void SetFolder_OnClick(object sender, RoutedEventArgs e)
     {
-        string path;
-        try
-        {
-            path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        }
-        catch (Exception ex) when (ex
-            is ArgumentException
-            or PlatformNotSupportedException
-        ) {
-            path = "/";
-        }
-        
-        var folderDialog = new OpenFolderDialog()
-        {
-            Multiselect = false,
-            Title = "Choose a folder",
-            InitialDirectory = path
-        };
+        var folderDialog = Utils.FileSystemUtils.GetBasicOpenFolderDialog();
         
         var result = folderDialog.ShowDialog();
         if (result == null || !result.Value)

@@ -140,6 +140,7 @@ public partial class VaultWindow
         switch (type)
         {
             case VaultObjectIdentifier.ObjectType.AssetGroup: AddAssetGroup(data); break;
+            case VaultObjectIdentifier.ObjectType.Image: AddImageAsset(data); break;
             // TODO
             
             default: throw new NotImplementedException();
@@ -162,5 +163,12 @@ public partial class VaultWindow
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error
                 );
         }
+    }
+
+    private void AddImageAsset(object data)
+    {
+        var typedData = (AddImageAssetControl.ReturnType)data;
+
+        // TODO select asset group
     }
 }
