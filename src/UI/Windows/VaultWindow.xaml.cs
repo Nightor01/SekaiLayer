@@ -150,9 +150,11 @@ public partial class VaultWindow
 
     private void AddAssetGroup(object data)
     {
+        var typedData = (AddAssetGroupControl.ReturnType)data;
+        
         try
         {
-            _vaultManager.AddAssetGroup((string)data);
+            _vaultManager.AddAssetGroup(typedData.Name);
         }
         catch (VaultManagerException e)
         {

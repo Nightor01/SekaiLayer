@@ -1,11 +1,12 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using SekaiLayer.Types;
 
 namespace SekaiLayer.UI.Controls;
 
 public partial class AddAssetGroupControl : IValidatable
 {
+    public record ReturnType(string Name);
+    
     public AddAssetGroupControl()
     {
         InitializeComponent();
@@ -29,6 +30,6 @@ public partial class AddAssetGroupControl : IValidatable
 
     public object GetData()
     {
-        return GroupName.Text;
+        return new ReturnType(GroupName.Text);
     }
 }
