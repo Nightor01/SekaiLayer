@@ -3,12 +3,15 @@ using System.Windows;
 using System.Windows.Controls;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Attributes;
+using SekaiLayer.UI.Controls;
 
 namespace SekaiLayer.UI.Windows;
 
 public partial class AddResourceDialog
 {
     public ObservableCollection<string> ObjectTypes { get; } = VaultObjectNames();
+    private const double _errorLabelThickness = 5; 
+    public (VaultObjectIdentifier.ObjectType, object)? Data { get; private set; }
     
     public AddResourceDialog()
     {
@@ -57,21 +60,35 @@ public partial class AddResourceDialog
         }
         
         var objectType = (VaultObjectIdentifier.ObjectType)selectedIndex;
-        
-        ContentHolder.Content = new Label() { Content = objectType.ToString() };
+
+        ContentHolder.Content = objectType switch
+        {
+            VaultObjectIdentifier.ObjectType.AssetGroup => new AddAssetGroupControl(),
+            _ => new TextBlock()
+            {
+                Text = "error: this operation is not yet supported",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(_errorLabelThickness),
+            }
+        };
     }
 
     private void Ok_OnClick(object sender, RoutedEventArgs e)
     {
-        DialogResult = Validate();
-        
-        Close();
+        bool result = Validate();
+
+        if (result != true)
+            return;
+
+        var data = (ContentHolder.Content as IValidatable)!.GetData();
+        var type = (VaultObjectIdentifier.ObjectType)ObjectType.SelectedIndex;
+        Data = (type, data);
+
+        DialogResult = result;
     }
 
     private void Cancel_OnClick(object sender, RoutedEventArgs e)
     {
         DialogResult = false;
-        
-        Close();
     }
 }

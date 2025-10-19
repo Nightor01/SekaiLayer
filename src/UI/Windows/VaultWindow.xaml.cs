@@ -6,6 +6,7 @@ using SekaiLayer.Services;
 using SekaiLayer.Types;
 using SekaiLayer.UI.Controls;
 using SekaiLayer.Types.Collections;
+using SekaiLayer.Types.Exceptions;
 
 namespace SekaiLayer.UI.Windows;
 
@@ -40,13 +41,20 @@ public partial class VaultWindow
             });
         }
 
+        LoadAllTreeViewItems();
+    }
+
+    private void LoadAllTreeViewItems()
+    {
         var assets = ((TreeViewItem)TreeView.Items[(int)TreeViewItems.Assets]!);
+        assets.Items.Clear();
         foreach (var gp in _vaultManager.GetAssetGroups())
         {
             assets.Items.Add(MakeTreeViewItem(gp));
         }
 
         var worlds = ((TreeViewItem)TreeView.Items[(int)TreeViewItems.Worlds]!);
+        worlds.Items.Clear();
         foreach (var world in _vaultManager.GetWorlds())
         {
             worlds.Items.Add(MakeTreeViewItem(world));
@@ -126,7 +134,31 @@ public partial class VaultWindow
         {
             return;
         }
+
+        var (type, data) = dialog.Data!.Value;
+
+        switch (type)
+        {
+            case VaultObjectIdentifier.ObjectType.AssetGroup: AddAssetGroup(data); break;
+            // TODO
+            
+            default: throw new NotImplementedException();
+        }
         
-        // TODO
+        LoadAllTreeViewItems();
+    }
+
+    private void AddAssetGroup(object data)
+    {
+        try
+        {
+            _vaultManager.AddAssetGroup((string)data);
+        }
+        catch (VaultManagerException e)
+        {
+            MessageBox.Show("An error occured while trying to add asset group:\n" + e.Message,
+                "Error", MessageBoxButton.OK, MessageBoxImage.Error
+                );
+        }
     }
 }

@@ -3,4 +3,5 @@
 public interface IValidatable
 {
     public bool Validate();
+    public object GetData();
 }
