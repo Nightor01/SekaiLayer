@@ -47,7 +47,8 @@ public class VaultManager
         _config.Worlds.Add(new()
         {
             Name = world,
-            Id = Guid.CreateVersion7()
+            Id = Guid.CreateVersion7(),
+            Type = VaultObjectIdentifier.ObjectType.World
         });   
         
         SaveConfiguration();
@@ -68,7 +69,8 @@ public class VaultManager
         _config.AssetGroups.Add(new()
         {
             Name = group,
-            Id = Guid.CreateVersion7()
+            Id = Guid.CreateVersion7(),
+            Type =  VaultObjectIdentifier.ObjectType.AssetGroup
         });
         
         SaveConfiguration();

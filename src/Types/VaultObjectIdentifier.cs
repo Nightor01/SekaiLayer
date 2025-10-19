@@ -1,7 +1,27 @@
-﻿namespace SekaiLayer.Types;
+﻿using System.Text.Json.Serialization;
+
+namespace SekaiLayer.Types;
 
 public class VaultObjectIdentifier
 {
-    public required string Name { get; set; }
-    public required Guid Id { get; set; }
+    public enum ObjectType
+    {
+        AssetGroup,
+        Image,
+        World,
+    }
+    
+    public required string Name { get; init; }
+    
+    public required Guid Id { get; init; }
+    
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public required ObjectType Type { get; init; }
+
+    public bool IsContentOpenable()
+    {
+        return Type
+            is ObjectType.Image
+            or ObjectType.World;
+    }
 }

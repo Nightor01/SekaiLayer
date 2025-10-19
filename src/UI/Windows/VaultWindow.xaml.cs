@@ -58,7 +58,7 @@ public partial class VaultWindow
         var item = new TreeViewItem()
         {
             Header = obj.Name,
-            Tag = obj.Id
+            Tag = obj
         };
         
         item.MouseDoubleClick += ItemOnMouseDoubleClick;
@@ -69,11 +69,13 @@ public partial class VaultWindow
     void ItemOnMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         var treeViewItem = (TreeViewItem)sender;
+        
+        var obj = (VaultObjectIdentifier)treeViewItem.Tag;
 
-        var name = (string)treeViewItem.Header;
-        var id = (Guid)treeViewItem.Tag;
+        if (!obj.IsContentOpenable())
+            return;
 
-        var item = _tabControlData.FirstOrDefault(tab => tab.Id == id);
+        var item = _tabControlData.FirstOrDefault(tab => tab.Id == obj.Id);
         if (item is not null)
         {
             TabControl.SelectedIndex = _tabControlData.IndexOf(item);
@@ -82,9 +84,9 @@ public partial class VaultWindow
         
         var tabItem = new CustomTabItem()
         {
-            Header = name,
-            Id = id,
-            Content = new Label(){ Content = id.ToString() }
+            Header = obj.Name,
+            Id = obj.Id,
+            Content = new Label(){ Content = obj.Id.ToString() }
         };
 
         _tabControlData.Add(tabItem);
