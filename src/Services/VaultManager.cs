@@ -4,6 +4,7 @@ using System.Text.Json;
 using SekaiLayer.Extensions;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Exceptions;
+using SekaiLayer.UI.Controls;
 
 namespace SekaiLayer.Services;
 
@@ -74,6 +75,48 @@ public class VaultManager
         });
         
         SaveConfiguration();
+    }
+    
+    // TODO change placement of records
+    /// <exception cref="VaultManagerException"></exception> 
+    public void AddImage(VaultObjectIdentifier group, AddImageAssetControl.ReturnType data)
+    {
+        // TODO create generalized methode AddFileToGroup
+        List<AssetSettings> config = GetGroupConfig(group);
+
+        if (config.Contains(x => x.Id.Name == data.Name))
+        {
+            throw new VaultManagerException("An asset with this name already exists.");
+        }
+
+        var fileId = Guid.CreateVersion7();
+        string fileName = fileId + Path.GetExtension(data.Path);
+        string finalPath = GetGroupAssetFilePath(VaultPath, group.Name, fileName);
+        
+        CopyFile(data.Path, finalPath);
+        
+        var imageSettings = new AssetSettings()
+        {
+            Id = new VaultObjectIdentifier()
+            {
+                Name = data.Name,
+                Type = VaultObjectIdentifier.ObjectType.Image,
+                Id = fileId
+            },
+            FileName = fileName,
+        };
+        
+        config.Add(imageSettings);
+        
+        GroupConfigUpdate(group, config);
+    }
+
+    /// <exception cref="VaultManagerException"></exception> 
+    public List<VaultObjectIdentifier> GetAssetsFromGroup(VaultObjectIdentifier group)
+    {
+        return GetGroupConfig(group)
+            .Select(x => x.Id)
+            .ToList();
     }
     
     public IReadOnlyList<VaultObjectIdentifier> GetAssetGroups() => _config.AssetGroups;
@@ -212,8 +255,6 @@ public class VaultManager
         try
         {
             Directory.CreateDirectory(directoryPath);
-            
-            // TODO Add more logic
         }
         catch (Exception e) when (e
             is UnauthorizedAccessException
@@ -245,6 +286,79 @@ public class VaultManager
         ) {
             throw new VaultManagerException(e.Message);
         }  
+    }
+    
+    /// <exception cref="VaultManagerException"></exception>
+    private void GroupConfigUpdate(VaultObjectIdentifier group, List<AssetSettings> settings)
+    {
+        try
+        {
+            string json = JsonSerializer.Serialize(settings, _options);
+            File.WriteAllText(GetGroupAssetFilePath(VaultPath, group.Name, "config.json"), json);
+        }
+        catch (Exception e) when (e
+            is ArgumentException
+            or PathTooLongException
+            or DirectoryNotFoundException
+            or IOException
+            or UnauthorizedAccessException
+            or NotSupportedException
+            or SecurityException
+        ) {
+            throw new VaultManagerException(e.Message);
+        } 
+    }
+
+    /// <exception cref="VaultManagerException"></exception>
+    private List<AssetSettings> GetGroupConfig(VaultObjectIdentifier group)
+    {
+        List<AssetSettings>? groupConfig;
+        
+        try
+        {
+            string contents = File.ReadAllText(GetGroupAssetFilePath(VaultPath, group.Name, "config.json"));
+            groupConfig = JsonSerializer.Deserialize<List<AssetSettings>>(contents);
+
+            if (groupConfig is null)
+                throw new VaultManagerException("Group configuration could not be deserialized from JSON");
+        }
+        catch (Exception e) when (e
+             is ArgumentException
+             or PathTooLongException
+             or DirectoryNotFoundException
+             or IOException
+             or UnauthorizedAccessException
+             or NotSupportedException
+             or SecurityException
+             or JsonException
+        ) {
+            throw new VaultManagerException(e.Message);
+        }
+        
+        return groupConfig;
+    }
+    
+    /// <exception cref="VaultManagerException"></exception>
+    private void CopyFile(string oldPath, string newPath)
+    {
+        try
+        {
+            File.Copy(oldPath, newPath, false);
+        }
+        catch (Exception e) when (e
+            is ArgumentException
+            or UnauthorizedAccessException
+            or IOException
+            or NotSupportedException
+        ) {
+            throw new VaultManagerException(e.Message);  
+        }
+    }
+
+    private static string GetGroupAssetFilePath(string path, string group, string fileName)
+    {
+        // TODO maybe add constant?
+        return Path.Combine(path, _assetsDir, group, fileName);
     }
     
     private static List<string> GetVaultDirectories(string path)
