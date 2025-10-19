@@ -6,13 +6,6 @@ namespace SekaiLayer.UI.Controls;
 
 public partial class AddImageAssetControl : IValidatable
 {
-    /// <param name="Name">Display name for the image</param>
-    /// <param name="Path">The path from which the image should be imported</param>
-    public record ReturnType(
-        string Name,
-        string Path
-    );
-    
     public AddImageAssetControl()
     {
         InitializeComponent();
@@ -41,7 +34,7 @@ public partial class AddImageAssetControl : IValidatable
 
     public object GetData()
     {
-        return new ReturnType(
+        return new ImportTypes.Image(
             ImageName.Text,
             FilePathDisplay.Text
         );

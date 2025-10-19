@@ -4,7 +4,6 @@ using System.Text.Json;
 using SekaiLayer.Extensions;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Exceptions;
-using SekaiLayer.UI.Controls;
 
 namespace SekaiLayer.Services;
 
@@ -78,9 +77,8 @@ public class VaultManager
         SaveConfiguration();
     }
     
-    // TODO change placement of records
     /// <exception cref="VaultManagerException"></exception> 
-    public void AddImage(VaultObjectIdentifier group, AddImageAssetControl.ReturnType data)
+    public void AddImage(VaultObjectIdentifier group, ImportTypes.Image data)
     {
         AddFileToGroup(group, data.Name, data.Path, VaultObjectIdentifier.ObjectType.Image);
     }

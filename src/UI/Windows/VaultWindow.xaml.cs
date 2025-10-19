@@ -178,7 +178,7 @@ public partial class VaultWindow
 
     private void AddAssetGroup(object data)
     {
-        var typedData = (AddAssetGroupControl.ReturnType)data;
+        var typedData = (ImportTypes.AssetGroup)data;
         
         try
         {
@@ -194,7 +194,7 @@ public partial class VaultWindow
 
     private void AddImageAsset(object data)
     {
-        var typedData = (AddImageAssetControl.ReturnType)data;
+        var typedData = (ImportTypes.Image)data;
 
         int index = GroupSelection();
 
