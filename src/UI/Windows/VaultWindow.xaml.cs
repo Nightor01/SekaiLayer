@@ -46,11 +46,19 @@ public partial class VaultWindow
 
     private void LoadAllTreeViewItems()
     {
-        var assets = GetSubTree(TreeViewItems.Assets);
-        assets.Items.Clear();
+        var groups = GetSubTree(TreeViewItems.Assets);
+        groups.Items.Clear();
         foreach (var gp in _vaultManager.GetAssetGroups())
         {
-            assets.Items.Add(MakeTreeViewItem(gp));
+            var treeViewItem = MakeTreeViewItem(gp);
+
+            var assets = GetAssetsFromGroup(gp);
+            foreach (var asset in assets)
+            {
+                treeViewItem.Items.Add(MakeTreeViewItem(asset));
+            }
+            
+            groups.Items.Add(treeViewItem);
         }
 
         var worlds = GetSubTree(TreeViewItems.Worlds);
@@ -59,6 +67,25 @@ public partial class VaultWindow
         {
             worlds.Items.Add(MakeTreeViewItem(world));
         }
+    }
+
+    private List<VaultObjectIdentifier> GetAssetsFromGroup(VaultObjectIdentifier group)
+    {
+        List<VaultObjectIdentifier> assets;
+
+        try
+        {
+            assets = _vaultManager.GetAssetsFromGroup(group);
+        }
+        catch (VaultManagerException e)
+        {
+            MessageBox.Show($"There was an error with reading from group – {group.Name}. Skipping...\n" 
+                + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error
+                );
+            return [];
+        }
+
+        return assets;
     }
 
     private TreeViewItem MakeTreeViewItem(VaultObjectIdentifier obj)
@@ -174,9 +201,19 @@ public partial class VaultWindow
         if (index == -1)
             return;
 
-        var group = (TreeViewItem)GetSubTree(TreeViewItems.Assets).Items[index]!;
+        var tvi = (TreeViewItem)GetSubTree(TreeViewItems.Assets).Items[index]!;
+        var group = (VaultObjectIdentifier)tvi.Tag; 
 
-        // TODO import image
+        try
+        {
+            _vaultManager.AddImage(group, typedData);
+        }
+        catch (VaultManagerException e)
+        {
+            MessageBox.Show("There was an error with adding this image.\n" + e.Message, 
+                "Error", MessageBoxButton.OK, MessageBoxImage.Error
+                );
+        }
     }
 
     private int GroupSelection()

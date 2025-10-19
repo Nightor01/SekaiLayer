@@ -312,11 +312,16 @@ public class VaultManager
     /// <exception cref="VaultManagerException"></exception>
     private List<AssetSettings> GetGroupConfig(VaultObjectIdentifier group)
     {
+        string path = GetGroupAssetFilePath(VaultPath, group.Name, "config.json");
+
+        if (!File.Exists(path))
+            return [];
+        
         List<AssetSettings>? groupConfig;
         
         try
         {
-            string contents = File.ReadAllText(GetGroupAssetFilePath(VaultPath, group.Name, "config.json"));
+            string contents = File.ReadAllText(path);
             groupConfig = JsonSerializer.Deserialize<List<AssetSettings>>(contents);
 
             if (groupConfig is null)
