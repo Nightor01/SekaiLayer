@@ -46,14 +46,14 @@ public partial class VaultWindow
 
     private void LoadAllTreeViewItems()
     {
-        var assets = ((TreeViewItem)TreeView.Items[(int)TreeViewItems.Assets]!);
+        var assets = GetSubTree(TreeViewItems.Assets);
         assets.Items.Clear();
         foreach (var gp in _vaultManager.GetAssetGroups())
         {
             assets.Items.Add(MakeTreeViewItem(gp));
         }
 
-        var worlds = ((TreeViewItem)TreeView.Items[(int)TreeViewItems.Worlds]!);
+        var worlds = GetSubTree(TreeViewItems.Worlds);
         worlds.Items.Clear();
         foreach (var world in _vaultManager.GetWorlds())
         {
@@ -169,6 +169,38 @@ public partial class VaultWindow
     {
         var typedData = (AddImageAssetControl.ReturnType)data;
 
-        // TODO select asset group
+        int index = GroupSelection();
+
+        if (index == -1)
+            return;
+
+        var group = (TreeViewItem)GetSubTree(TreeViewItems.Assets).Items[index]!;
+
+        // TODO import image
+    }
+
+    private int GroupSelection()
+    {
+        var names = _vaultManager
+            .GetAssetGroups()
+            .Select(x => x.Name)
+            .ToList();
+        
+        var dialog = new SelectGroupDialog(names);
+
+        if (dialog.ShowDialog() != true)
+        {
+            MessageBox.Show("Asset import was canceled", "Information",
+                MessageBoxButton.OK, MessageBoxImage.Information
+            );
+            return -1;
+        }
+
+        return dialog.Index;
+    }
+
+    private TreeViewItem GetSubTree(TreeViewItems tvi)
+    {
+        return (TreeViewItem)TreeView.Items[(int)tvi]!;
     }
 }
