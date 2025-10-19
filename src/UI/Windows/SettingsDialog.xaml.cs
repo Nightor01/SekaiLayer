@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using SekaiLayer.Services;
 using SekaiLayer.Types;
+using SekaiLayer.Types.Data;
 using SekaiLayer.Types.Exceptions;
 
 namespace SekaiLayer.UI.Windows;

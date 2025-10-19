@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:SekaiLayer.UI.Windows"
         mc:Ignorable="d"
         Title="Group Selection Dialog" Height="100" Width="250"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Icon="{StaticResource AppIcoIcon}">
     <StackPanel>
         <Label Content="Select a group:" />
         <Grid>

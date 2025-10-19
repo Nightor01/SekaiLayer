@@ -1,4 +1,4 @@
-﻿namespace SekaiLayer.Types;
+﻿namespace SekaiLayer.Types.Data;
 
 public class AssetSettings
 {

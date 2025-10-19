@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Windows;
 using SekaiLayer.Types;
+using SekaiLayer.Types.Data;
 
 namespace SekaiLayer.UI.Windows;
 

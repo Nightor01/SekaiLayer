@@ -1,4 +1,6 @@
-﻿namespace SekaiLayer.Types;
+﻿using System.Drawing;
+
+namespace SekaiLayer.Types;
 
 public static class ImportTypes
 {
@@ -9,5 +11,18 @@ public static class ImportTypes
     public record Image(
         string Name,
         string Path
+    );
+
+    /// <param name="Name">Display name for the image</param>
+    /// <param name="Path">The path from which the image should be imported</param>
+    /// <param name="XCount">Number of tiles on the X direction</param>
+    /// <param name="YCount">Number of tiles on the Y direction</param>
+    /// <param name="Empty">Points that should not be included in the tileset</param>
+    public record TileSet(
+        string Name,
+        string Path,
+        int XCount,
+        int YCount,
+        List<Point> Empty
     );
 }

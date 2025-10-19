@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using SekaiLayer.Types;
+using SekaiLayer.Types.Data;
 
 namespace SekaiLayer.UI.Controls;
 

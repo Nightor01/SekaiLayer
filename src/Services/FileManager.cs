@@ -4,6 +4,7 @@ using System.Text.Json;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Exceptions;
 using SekaiLayer.Extensions;
+using SekaiLayer.Types.Data;
 
 namespace SekaiLayer.Services;
 

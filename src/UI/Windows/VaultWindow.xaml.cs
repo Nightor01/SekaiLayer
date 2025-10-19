@@ -168,6 +168,7 @@ public partial class VaultWindow
         {
             case VaultObjectIdentifier.ObjectType.AssetGroup: AddAssetGroup(data); break;
             case VaultObjectIdentifier.ObjectType.Image: AddImageAsset(data); break;
+            case VaultObjectIdentifier.ObjectType.TileSet: AddTileSetAsset(data); break;
             // TODO
             
             default: throw new NotImplementedException();
@@ -213,6 +214,30 @@ public partial class VaultWindow
             MessageBox.Show("There was an error with adding this image.\n" + e.Message, 
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error
                 );
+        }
+    }
+
+    private void AddTileSetAsset(object data)
+    {
+        var typedData = (ImportTypes.TileSet)data;
+
+        int index = GroupSelection();
+
+        if (index == -1)
+            return;
+
+        var tvi = (TreeViewItem)GetSubTree(TreeViewItems.Assets).Items[index]!;
+        var group = (VaultObjectIdentifier)tvi.Tag; 
+
+        try
+        {
+            _vaultManager.AddTileSet(group, typedData);
+        }
+        catch (VaultManagerException e)
+        {
+            MessageBox.Show("There was an error with adding this tileset.\n" + e.Message, 
+                "Error", MessageBoxButton.OK, MessageBoxImage.Error
+            );
         }
     }
 

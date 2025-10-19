@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SekaiLayer.Types;
+namespace SekaiLayer.Types.Data;
 
 public class VaultEntry
 {

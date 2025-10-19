@@ -1,11 +1,16 @@
-﻿using System.Windows;
-using SekaiLayer.Types;
+﻿using SekaiLayer.Types;
 using SekaiLayer.Utils;
 
 namespace SekaiLayer.UI.Controls;
 
 public partial class AddImageAssetControl : IValidatable
 {
+    public static string Filter { get; } = "Png file (.png)|*.png|" 
+                                         + "Jpeg file (.jpeg)|*.jpeg|"
+                                         + "Jpeg file (.jpg)|*.jpg|"
+                                         + "Bitmap file (.bmp)|*.bmp|"
+                                         + "All files (*.*)|*.*";
+    
     public AddImageAssetControl()
     {
         InitializeComponent();
@@ -21,7 +26,7 @@ public partial class AddImageAssetControl : IValidatable
             return false;
         }
         
-        bool emptyFilePath = string.IsNullOrEmpty(FilePathDisplay.Text);
+        bool emptyFilePath = string.IsNullOrEmpty(PathSelector.FilePath);
 
         if (emptyFilePath)
         {
@@ -36,26 +41,7 @@ public partial class AddImageAssetControl : IValidatable
     {
         return new ImportTypes.Image(
             ImageName.Text,
-            FilePathDisplay.Text
+            PathSelector.FilePath
         );
-    }
-
-    private void SelectPathOnClick(object sender, RoutedEventArgs e)
-    {
-        var folderDialog = FileSystemUtils.GetBasicOpenFileDialog(
-            "Png file (.png)|*.png|" +
-            "Jpeg file (.jpeg)|*.jpeg|" +
-            "Jpeg file (.jpg)|*.jpg|" +
-            "Bitmap file (.bmp)|*.bmp|" +
-            "All files (*.*)|*.*"
-            );
-        
-        var result = folderDialog.ShowDialog();
-        if (result == null || !result.Value)
-        {
-            return;
-        }
-        
-        FilePathDisplay.Text = folderDialog.FileName.Replace("\\", "/");
     }
 }

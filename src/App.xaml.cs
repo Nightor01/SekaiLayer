@@ -4,6 +4,7 @@ using System.Windows;
 using H.NotifyIcon;
 using SekaiLayer.Services;
 using SekaiLayer.Types;
+using SekaiLayer.Types.Data;
 using SekaiLayer.Types.Exceptions;
 using SekaiLayer.UI.Controls;
 using SekaiLayer.UI.Windows;

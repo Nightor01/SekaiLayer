@@ -66,6 +66,7 @@ public partial class AddResourceDialog
         {
             VaultObjectIdentifier.ObjectType.AssetGroup => new AddAssetGroupControl(),
             VaultObjectIdentifier.ObjectType.Image => new AddImageAssetControl(),
+            VaultObjectIdentifier.ObjectType.TileSet => new AddTileSetAssetControl(),
             _ => new TextBlock()
             {
                 Text = "error: this operation is not yet supported",

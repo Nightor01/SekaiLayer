@@ -3,6 +3,7 @@ using System.Security;
 using System.Text.Json;
 using SekaiLayer.Extensions;
 using SekaiLayer.Types;
+using SekaiLayer.Types.Data;
 using SekaiLayer.Types.Exceptions;
 
 namespace SekaiLayer.Services;
@@ -80,7 +81,31 @@ public class VaultManager
     /// <exception cref="VaultManagerException"></exception> 
     public void AddImage(VaultObjectIdentifier group, ImportTypes.Image data)
     {
-        AddFileToGroup(group, data.Name, data.Path, VaultObjectIdentifier.ObjectType.Image);
+        AddFileToGroup(
+            group,
+            data.Name,
+            data.Path,
+            VaultObjectIdentifier.ObjectType.Image,
+            DefaultSettingsCreator
+            );
+    }
+
+    /// <exception cref="VaultManagerException"></exception> 
+    public void AddTileSet(VaultObjectIdentifier group, ImportTypes.TileSet data)
+    {
+        AddFileToGroup(group, data.Name, data.Path, VaultObjectIdentifier.ObjectType.TileSet, Func);
+        
+        AssetSettings Func(VaultObjectIdentifier id, string fileName)
+        {
+            return new TileSetSettings()
+            {
+                Id = id,
+                FileName = fileName,
+                XCount = data.XCount,
+                YCount = data.YCount,
+                Empty = data.Empty
+            };
+        }
     }
 
     /// <exception cref="VaultManagerException"></exception> 
@@ -315,9 +340,20 @@ public class VaultManager
         return groupConfig;
     }
     
+    
+    /// <summary>
+    /// Adds a file to group using provided arguments
+    /// </summary>
+    /// <param name="group">Group where the file should be placed</param>
+    /// <param name="oldPath">Path of the file to be imported</param>
+    /// <param name="name">Name of the asset</param>
+    /// <param name="type">Type of the asset</param>
+    /// <param name="settingsCreator">A functor that takes in an id created by this function and a name created by this
+    /// function and creates an AssetSettings object accordingly</param>
     /// <exception cref="VaultManagerException"></exception>
-    private void AddFileToGroup(VaultObjectIdentifier group, string oldPath, string name, VaultObjectIdentifier.ObjectType type)
-    {
+    private void AddFileToGroup(VaultObjectIdentifier group, string oldPath, string name,
+        VaultObjectIdentifier.ObjectType type, Func<VaultObjectIdentifier, string, AssetSettings> settingsCreator
+    ) {
         List<AssetSettings> config = GetGroupConfig(group);
 
         if (config.Contains(x => x.Id.Name == name))
@@ -330,21 +366,27 @@ public class VaultManager
         string finalPath = GetGroupAssetFilePath(VaultPath, group.Name, fileName);
         
         CopyFile(oldPath, finalPath);
-        
-        var imageSettings = new AssetSettings()
+
+        var id = new VaultObjectIdentifier()
         {
-            Id = new VaultObjectIdentifier()
-            {
-                Name = name,
-                Type = type,
-                Id = fileId
-            },
-            FileName = fileName,
+            Name = name,
+            Type = type,
+            Id = fileId
         };
+        var imageSettings = settingsCreator(id, fileName);
         
         config.Add(imageSettings);
         
         GroupConfigUpdate(group, config);
+    }
+
+    private static AssetSettings DefaultSettingsCreator(VaultObjectIdentifier id, string fileName)
+    {
+        return new AssetSettings()
+        {
+            Id = id,
+            FileName = fileName
+        };
     }
     
     /// <exception cref="VaultManagerException"></exception>

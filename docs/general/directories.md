@@ -26,7 +26,7 @@ found inside the directory structure.
 
 ## Asset Groups
 
-Each asset group may contain tilemaps or entity images.
+Each asset group may contain tilesets or entity images.
 Such files may be copied and imported using
 Sekai-Layer or be copied manually and later on imported
 into Sekai-Layer. What each file represents is included
@@ -36,7 +36,7 @@ inside the `config.json` file that each asset group has.
 
 Represent entities placeable into worlds.
 
-### Tilemaps
+### Tilesets
 
 Images that contain individual tiles – the small chunks that
 worlds are built from in Sekai-Layer.
