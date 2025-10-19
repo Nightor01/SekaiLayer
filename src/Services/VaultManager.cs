@@ -82,34 +82,7 @@ public class VaultManager
     /// <exception cref="VaultManagerException"></exception> 
     public void AddImage(VaultObjectIdentifier group, AddImageAssetControl.ReturnType data)
     {
-        // TODO create generalized methode AddFileToGroup
-        List<AssetSettings> config = GetGroupConfig(group);
-
-        if (config.Contains(x => x.Id.Name == data.Name))
-        {
-            throw new VaultManagerException("An asset with this name already exists.");
-        }
-
-        var fileId = Guid.CreateVersion7();
-        string fileName = fileId + Path.GetExtension(data.Path);
-        string finalPath = GetGroupAssetFilePath(VaultPath, group.Name, fileName);
-        
-        CopyFile(data.Path, finalPath);
-        
-        var imageSettings = new AssetSettings()
-        {
-            Id = new VaultObjectIdentifier()
-            {
-                Name = data.Name,
-                Type = VaultObjectIdentifier.ObjectType.Image,
-                Id = fileId
-            },
-            FileName = fileName,
-        };
-        
-        config.Add(imageSettings);
-        
-        GroupConfigUpdate(group, config);
+        AddFileToGroup(group, data.Name, data.Path, VaultObjectIdentifier.ObjectType.Image);
     }
 
     /// <exception cref="VaultManagerException"></exception> 
@@ -342,6 +315,38 @@ public class VaultManager
         }
         
         return groupConfig;
+    }
+    
+    /// <exception cref="VaultManagerException"></exception>
+    private void AddFileToGroup(VaultObjectIdentifier group, string oldPath, string name, VaultObjectIdentifier.ObjectType type)
+    {
+        List<AssetSettings> config = GetGroupConfig(group);
+
+        if (config.Contains(x => x.Id.Name == name))
+        {
+            throw new VaultManagerException("An asset with this name already exists.");
+        }
+
+        var fileId = Guid.CreateVersion7();
+        string fileName = fileId + Path.GetExtension(oldPath);
+        string finalPath = GetGroupAssetFilePath(VaultPath, group.Name, fileName);
+        
+        CopyFile(oldPath, finalPath);
+        
+        var imageSettings = new AssetSettings()
+        {
+            Id = new VaultObjectIdentifier()
+            {
+                Name = name,
+                Type = type,
+                Id = fileId
+            },
+            FileName = fileName,
+        };
+        
+        config.Add(imageSettings);
+        
+        GroupConfigUpdate(group, config);
     }
     
     /// <exception cref="VaultManagerException"></exception>
