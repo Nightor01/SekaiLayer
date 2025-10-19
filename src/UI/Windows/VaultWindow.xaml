@@ -102,14 +102,17 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal"
-                                d:DataContext="{d:DesignInstance Type=controls:HeaderOnlyTabItem}">
+                                d:DataContext="{d:DesignInstance Type=controls:CustomTabItem}">
                         <TextBlock Text="{Binding Header}" Margin="0 0 10 0" />
                         <Image Source="{StaticResource DiRemove}" Width="20" Height="20" MouseUp="TabItemRemove" />
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
-                <DataTemplate />
+                <DataTemplate>
+                    <ContentControl d:DataContext="{d:DesignInstance Type=controls:CustomTabItem}"
+                                    Content="{Binding Content}" />
+                </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
     </Grid>

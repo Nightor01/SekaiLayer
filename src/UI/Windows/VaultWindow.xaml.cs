@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using SekaiLayer.Services;
 using SekaiLayer.Types;
 using SekaiLayer.UI.Controls;
+using SekaiLayer.Types.Collections;
 
 namespace SekaiLayer.UI.Windows;
 
@@ -13,7 +13,7 @@ public partial class VaultWindow
 {
     private readonly VaultManager _vaultManager;
     public string VaultName => _vaultManager.VaultName;
-    private readonly ObservableCollection<HeaderOnlyTabItem> _tabControlData = [];
+    private readonly ReverseObservableCollection<CustomTabItem> _tabControlData = [];
 
     private enum TreeViewItems
     {
@@ -26,7 +26,7 @@ public partial class VaultWindow
         _vaultManager = vaultManager;
         
         InitializeComponent();
-        
+
         TabControl.ItemsSource = _tabControlData;
     }
 
@@ -80,14 +80,16 @@ public partial class VaultWindow
             return;
         }
         
-        var tabItem = new HeaderOnlyTabItem()
+        var tabItem = new CustomTabItem()
         {
             Header = name,
-            Id = id
+            Id = id,
+            Content = new Label(){ Content = id.ToString() }
         };
 
         _tabControlData.Add(tabItem);
-        
+        TabControl.SelectedIndex = 0;
+
         // TODO Add logic
     }
 
