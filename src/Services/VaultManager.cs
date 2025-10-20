@@ -11,10 +11,8 @@ namespace SekaiLayer.Services;
 
 public class VaultManager
 {
-    private readonly VaultEntry _entry;
-    public string VaultPath => _entry.Path;
-    public string VaultName => _entry.Name;
     
+    private readonly VaultEntry _entry;
     private readonly VaultConfiguration _config;
 
     private static readonly JsonSerializerOptions _options = GlobalOptions.JsonSerializer();
@@ -23,6 +21,10 @@ public class VaultManager
     private static readonly string _configFile = Path.Combine(_configDir, _generalConfigFile);
     private const string _assetsDir = "Assets";
     private const string _worldsDir = "Worlds";
+
+    public string VaultPath => _entry.Path;
+    public string VaultName => _entry.Name;
+    public IReadOnlyDictionary<Guid, string> Dictionary => _config.Dictionary; 
     
     /// <exception cref="VaultManagerException"></exception>
     public VaultManager(VaultEntry entry)
@@ -84,8 +86,8 @@ public class VaultManager
     {
         AddFileToGroup(
             group,
-            data.Name,
             data.Path,
+            data.Name,
             VaultObjectIdentifier.ObjectType.Image,
             DefaultSettingsCreator
             );
@@ -207,8 +209,8 @@ public class VaultManager
             {
                 CollaborationEnabled = false
             };
-            string json = JsonSerializer.Serialize(defaultConfiguration, _options);
-            File.WriteAllText(GetConfigFilePath(path), json);
+            string configJson = JsonSerializer.Serialize(defaultConfiguration, _options);
+            File.WriteAllText(GetConfigFilePath(path), configJson);
         }
         catch (Exception e) when (e
             is ArgumentException
@@ -379,6 +381,9 @@ public class VaultManager
         config.Add(imageSettings);
         
         GroupConfigUpdate(group, config);
+        
+        _config.Dictionary.Add(fileId, group.Name);
+        SaveConfiguration();
     }
 
     private static AssetSettings DefaultSettingsCreator(VaultObjectIdentifier id, string fileName)

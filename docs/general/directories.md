@@ -13,6 +13,7 @@ shown here:
 - Root Vault Directory
   - Config
     - `config.json`
+    - `dictionary.json`
   - Assets
     - gp1
       - `config.json`
