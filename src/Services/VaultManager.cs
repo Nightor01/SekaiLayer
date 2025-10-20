@@ -106,7 +106,7 @@ public class VaultManager
                 FileName = fileName,
                 XCount = data.XCount,
                 YCount = data.YCount,
-                Empty = data.Empty
+                Exclusions = data.Exclusions
             };
         }
     }

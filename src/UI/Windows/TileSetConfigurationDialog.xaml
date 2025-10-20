@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:SekaiLayer.UI.Windows"
+        xmlns:ctrls="clr-namespace:SekaiLayer.UI.Controls"
         mc:Ignorable="d"
         Title="TileSetConfigurationWindow" Height="450" Width="800"
         Icon="{StaticResource AppIcoIcon}">
     <Grid>
-        
+        <ctrls:TileSetConfigurationControl />
     </Grid>
 </Window>

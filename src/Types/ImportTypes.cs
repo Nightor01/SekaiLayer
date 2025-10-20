@@ -17,12 +17,12 @@ public static class ImportTypes
     /// <param name="Path">The path from which the image should be imported</param>
     /// <param name="XCount">Number of tiles on the X direction</param>
     /// <param name="YCount">Number of tiles on the Y direction</param>
-    /// <param name="Empty">Points that should not be included in the tileset</param>
+    /// <param name="Exclusions">Points that should not be included in the tileset</param>
     public record TileSet(
         string Name,
         string Path,
         int XCount,
         int YCount,
-        List<Point> Empty
+        List<Point> Exclusions
     );
 }

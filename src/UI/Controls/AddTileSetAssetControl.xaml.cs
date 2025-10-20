@@ -16,7 +16,7 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
 
     private int _xCountValue = -1;
     private int _yCountValue = -1;
-    private List<Point> _emptyTiles = [];
+    private List<Point> _excludedTiles = [];
 
     private int _xCount
     {
@@ -57,7 +57,7 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
 
         _xCount = dialog.XCount;
         _yCount = dialog.YCount;
-        _emptyTiles = dialog.EmptyTiles;
+        _excludedTiles = dialog.ExcludedTiles;
     }
 
     public bool Validate()
@@ -96,7 +96,7 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
             PathSelector.FilePath,
             _xCount,
             _yCount,
-            _emptyTiles
+            _excludedTiles
             );
     }
 }
