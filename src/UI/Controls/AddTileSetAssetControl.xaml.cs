@@ -9,8 +9,8 @@ namespace SekaiLayer.UI.Controls;
 
 public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChanged
 {
-    public static string Filter = "Png file (.png)|*.png|" 
-                                + "Bitmap file (.bmp)|*.bmp";
+    public static string Filter { get; } = "Png file (.png)|*.png|" 
+                                         + "Bitmap file (.bmp)|*.bmp";
     
     public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -15,7 +15,7 @@
             
             <Label Content="File Path:" />
             
-            <local:PathSelector x:Name="PathSelector" Filter="{}" />
+            <local:PathSelector x:Name="PathSelector" Filter="{Binding Filter}" />
             
             <Label Content="TileSet Configuration" />
             <Grid>

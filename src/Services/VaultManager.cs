@@ -5,6 +5,7 @@ using SekaiLayer.Extensions;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Data;
 using SekaiLayer.Types.Exceptions;
+using SekaiLayer.Utils;
 
 namespace SekaiLayer.Services;
 
@@ -93,7 +94,7 @@ public class VaultManager
     /// <exception cref="VaultManagerException"></exception> 
     public void AddTileSet(VaultObjectIdentifier group, ImportTypes.TileSet data)
     {
-        AddFileToGroup(group, data.Name, data.Path, VaultObjectIdentifier.ObjectType.TileSet, Func);
+        AddFileToGroup(group, data.Path, data.Name, VaultObjectIdentifier.ObjectType.TileSet, Func);
         
         AssetSettings Func(VaultObjectIdentifier id, string fileName)
         {

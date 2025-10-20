@@ -25,7 +25,8 @@ public partial class SelectGroupDialog : Window
                 );
             return;
         }
-        
+
+        Index = selctedIndex;
         DialogResult = true;
     }
 }

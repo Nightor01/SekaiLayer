@@ -180,7 +180,7 @@ public partial class VaultWindow
     private void AddAssetGroup(object data)
     {
         var typedData = (ImportTypes.AssetGroup)data;
-        
+
         try
         {
             _vaultManager.AddAssetGroup(typedData.Name);
@@ -189,7 +189,7 @@ public partial class VaultWindow
         {
             MessageBox.Show("An error occured while trying to add asset group:\n" + e.Message,
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error
-                );
+            );
         }
     }
 

@@ -28,6 +28,7 @@ public class VaultObjectIdentifier
     {
         return Type
             is ObjectType.Image
-            or ObjectType.World;
+            or ObjectType.World
+            or ObjectType.TileSet;
     }
 }
