@@ -1,5 +1,6 @@
 ﻿using System.Media;
 using System.Windows;
+using System.Windows.Input;
 using SekaiLayer.Types.Collections;
 
 namespace SekaiLayer.UI.Controls;
@@ -106,5 +107,61 @@ public partial class TileSetConfigurationControl
         }
         
         return new Point(values[0], values[1]);
+    }
+
+    private void ExclusionBox_OnPreviewKeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+        {
+            return;
+        }
+
+        if (!TryAddExclusion(ExclusionBox.Text))
+        {
+            SystemSounds.Exclamation.Play();
+            return;
+        }
+
+        if (!Keyboard.IsKeyDown(Key.LeftShift))
+        {
+            ExclusionBox.Text = string.Empty;
+        }
+    }
+
+    private void RemoveExclusion_OnClick(object sender, RoutedEventArgs e)
+    {
+        ExcludedPoints.ExceptWith(ExclusionListDisplay.SelectedItems.AsQueryable().Cast<Rect>());
+    }
+
+    private void ClearExclusion_OnClick(object sender, RoutedEventArgs e)
+    {
+        ExcludedPoints.Clear();
+    }
+
+    private void Help_OnClick(object sender, RoutedEventArgs e)
+    {
+        MessageBox.Show("""
+                        By setting the `x` and `y` sample counts, you can set the tiling of the chosen tileset.
+                        
+                        At the exclusion part of the dialog, you can set tiles, that should not be included in
+                        the tileset (for example tiles, that are completely empty). This can be done by entering
+                        individual points inside the textbox in the format `(x;y)`, by entering rectangular
+                        regions in the format `(x1;y1)-(x2;y2)`, or by clicking on the `Manual` toggle button
+                        and selecting the tiles with a mouse.
+                        
+                        Textbox selection:
+                        After entering the desired point or region, you can press enter to add it to exclusions
+                        and clear the textbox, or you can press shift+enter to add it to exclusions but not clear
+                        the textbox. Alternatively, you can use the `Add` button for that.
+                        
+                        Manual selection:
+                        By clicking you can select or deselect a tile. By draging the mouse you can select or
+                        deselect a whole region.
+                        
+                        Removal of exclusions:
+                        That can be done manually or within the exclusion display box. By selecting an exclusion
+                        and pressing `Remove`, you can remove it. By pressing clear, you can clear all entered
+                        exclusions.
+                        """, "Help", MessageBoxButton.OK, MessageBoxImage.Question);
     }
 }

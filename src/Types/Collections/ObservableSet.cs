@@ -19,62 +19,35 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
     {
         _set.Add(item);
 
-        OnCollectionChanged(NotifyCollectionChangedAction.Add, [item]);
+        OnCollectionChanged(NotifyCollectionChangedAction.Add, [item], -1);
         OnPropertyChanged(EventArgsCache.CountPropertyChanged);
     }
 
     public void ExceptWith(IEnumerable<T> other)
     {
-        var otherSet = other is ISet<T> ? other : other.ToHashSet();
-        List<T> removed = [];
-        
-        var changed = false;
-        _set.RemoveWhere(x =>
-        {
-            bool result = otherSet.Contains(x);
+        int beforeCount = _set.Count;
+        _set.ExceptWith(other);
 
-            if (result)
-            {
-                removed.Add(x);
-                changed = true;
-            }
-
-            return result;
-        });
-
-        if (!changed)
+        if (_set.Count == beforeCount)
         {
             return;
         }
         
-        OnCollectionChanged(NotifyCollectionChangedAction.Remove, removed);
+        OnCollectionChanged(NotifyCollectionChangedAction.Reset, null!, -1);
         OnPropertyChanged(EventArgsCache.CountPropertyChanged);
     }
 
     public void IntersectWith(IEnumerable<T> other)
     {
-        var otherSet = other is ISet<T> ? other : other.ToHashSet();
-        List<T> removed = [];
-        
-        var changed = false;
-        _set.RemoveWhere(x =>
-        {
-            bool result = !otherSet.Contains(x);
-            if (result)
-            {
-                removed.Add(x);
-                changed = true;
-            }
+        int beforeCount = _set.Count;
+        _set.IntersectWith(other);
 
-            return result;
-        });
-
-        if (!changed)
+        if (beforeCount == _set.Count)
         {
             return;
         }
         
-        OnCollectionChanged(NotifyCollectionChangedAction.Remove, removed);
+        OnCollectionChanged(NotifyCollectionChangedAction.Reset, null!, -1);
         OnPropertyChanged(EventArgsCache.CountPropertyChanged);
     }
 
@@ -93,7 +66,6 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
     public void SymmetricExceptWith(IEnumerable<T> other)
     {
         var otherSet = other.ToHashSet();
-        List<T> removed = [];
         List<T> added = [];
 
         var changed = false;
@@ -102,7 +74,6 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
             bool result = otherSet.Contains(x);
             if (result)
             {
-                removed.Add(x);
                 otherSet.ExceptWith([x]);
                 changed = true;
             }
@@ -124,8 +95,8 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
             return;
         }
         
-        OnCollectionChanged(NotifyCollectionChangedAction.Remove, removed);
-        OnCollectionChanged(NotifyCollectionChangedAction.Add, added);
+        OnCollectionChanged(NotifyCollectionChangedAction.Reset, null!, -1);
+        OnCollectionChanged(NotifyCollectionChangedAction.Add, added, -1);
         OnPropertyChanged(EventArgsCache.CountPropertyChanged);
     }
 
@@ -152,7 +123,7 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
             return;
         }
         
-        OnCollectionChanged(NotifyCollectionChangedAction.Add, added);
+        OnCollectionChanged(NotifyCollectionChangedAction.Add, added, -1);
         OnPropertyChanged(EventArgsCache.CountPropertyChanged);
     }
 
@@ -165,7 +136,7 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
             return false;
         }
 
-        OnCollectionChanged(NotifyCollectionChangedAction.Add, [item]);
+        OnCollectionChanged(NotifyCollectionChangedAction.Add, [item], -1);
         OnPropertyChanged(EventArgsCache.CountPropertyChanged);
         return true;
     }
@@ -177,11 +148,9 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
             return;
         }
         
-        List<T> items = _set.AsEnumerable().ToList(); 
-        
         _set.Clear();
         
-        OnCollectionChanged(NotifyCollectionChangedAction.Reset, items);
+        OnCollectionChanged(NotifyCollectionChangedAction.Reset, null!, -1);
         OnPropertyChanged(EventArgsCache.CountPropertyChanged);
     }
 
@@ -198,7 +167,7 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
             return false;
         }
 
-        OnCollectionChanged(NotifyCollectionChangedAction.Remove, [item]);
+        OnCollectionChanged(NotifyCollectionChangedAction.Reset, null!, -1);
         OnPropertyChanged(EventArgsCache.CountPropertyChanged);
         return true;
     }
@@ -206,7 +175,7 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
     public int Count => _set.Count;
     public bool IsReadOnly => false;
 
-    private void OnCollectionChanged(NotifyCollectionChangedAction action, List<T> changedItems)
+    private void OnCollectionChanged(NotifyCollectionChangedAction action, List<T> changedItems, int index)
     {
         if (CollectionChanged is null)
         {
@@ -215,7 +184,8 @@ public class ObservableSet<T> : ISet<T>, INotifyCollectionChanged, INotifyProper
         
         CollectionChanged(this, new NotifyCollectionChangedEventArgs(
             action,
-            changedItems
+            changedItems,
+            index
             ));
     }
 
