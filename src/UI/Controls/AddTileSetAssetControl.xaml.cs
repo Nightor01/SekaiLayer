@@ -3,6 +3,7 @@ using System.Windows;
 using SekaiLayer.Types;
 using SekaiLayer.UI.Windows;
 using SekaiLayer.Utils;
+using SkiaSharp;
 using Point = System.Drawing.Point;
 
 namespace SekaiLayer.UI.Controls;
@@ -48,7 +49,21 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
 
     private void Configure_OnClick(object sender, RoutedEventArgs e)
     {
-        var dialog = new TileSetConfigurationDialog();
+        if (string.IsNullOrEmpty(PathSelector.FilePath))
+        {
+            ShowImageError();
+            return;
+        }
+        
+        using var image = SKImage.FromEncodedData(PathSelector.FilePath);
+        
+        if (image is null)
+        {
+            ShowImageError();
+            return;
+        }
+            
+        var dialog = new TileSetConfigurationDialog(image);
         
         if (dialog.ShowDialog() != true)
         {
@@ -58,6 +73,13 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
         _xCount = dialog.XCount;
         _yCount = dialog.YCount;
         _excludedTiles = dialog.ExcludedTiles;
+    }
+
+    private void ShowImageError()
+    {
+        MessageBox.Show("Image could not be opened.", "Error",
+            MessageBoxButton.OK, MessageBoxImage.Error
+            );
     }
 
     public bool Validate()

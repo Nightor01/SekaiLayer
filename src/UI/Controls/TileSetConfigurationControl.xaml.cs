@@ -1,19 +1,99 @@
-﻿using System.Media;
+﻿using System.Diagnostics;
+using System.Media;
 using System.Windows;
 using System.Windows.Input;
 using SekaiLayer.Types.Collections;
+using SkiaSharp;
+using SkiaSharp.Views.Desktop;
 
 namespace SekaiLayer.UI.Controls;
 
 public partial class TileSetConfigurationControl
 {
-    // TODO make as observable set
+    public int XCount => XCountNud.Value ?? -1;
+    public int YCount => YCountNud.Value ?? -1;
     public ObservableSet<Rect> ExcludedPoints { get; } = [];
+    
+    public static readonly DependencyProperty ImageProperty = DependencyProperty.Register(
+        nameof(Image),
+        typeof(SKImage),
+        typeof(TileSetConfigurationControl),
+        new PropertyMetadata(null)
+        );
+
+    public SKImage? Image
+    {
+        get => (SKImage)GetValue(ImageProperty);
+        set => SetValue(ImageProperty, value);
+    }
+
+    private static readonly SKPaint _linePaint = new()
+    {
+        Color = SKColors.Red,
+        StrokeWidth = 2,
+        Style = SKPaintStyle.Stroke
+    };
+    
+    private static readonly SKPaint _rectPaint = new()
+    {
+        Color = SKColors.Blue,
+        StrokeWidth = 2,
+        Style = SKPaintStyle.Stroke
+    };
     
     public TileSetConfigurationControl()
     {
         InitializeComponent();
+
+        XCountNud.Value = 1;
+        YCountNud.Value = 1;
     }
+    
+    private void Canvas_OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
+    {
+        if (Image is null)
+        {
+            return;
+        }
+        
+        var canvas = e.Surface.Canvas;
+        canvas.Clear(SKColors.Transparent);
+        var rect = GetDestinationRectangle(e.Info.Rect);
+        
+        canvas.DrawImage(Image, rect);
+
+        int? xCount = XCountNud.Value;
+        int? yCount = YCountNud.Value;
+
+        if (xCount is null || yCount is null)
+        {
+            return;
+        }
+        
+        // Cast added to avoid warning
+        double xDifference = (rect.Width / Image.Width) * (int)(Image.Width / xCount.Value);
+        double yDifference = (rect.Height / Image.Height) * (int)(Image.Height / yCount.Value);
+
+        for (int x = 0; x <= xCount.Value; ++x)
+        {
+            float xPos = (float)(x * xDifference);
+            canvas.DrawLine(xPos, 0, xPos, (float)(yCount * yDifference), _linePaint);
+        }
+
+        for (int y = 0; y <= yCount.Value; ++y)
+        {
+            float yPos = (float)(y * yDifference);
+            canvas.DrawLine(0, yPos, (float)(xCount * xDifference), yPos, _linePaint);
+        }
+        
+        canvas.DrawRect(rect, _rectPaint);
+    }
+
+    private SKRect GetDestinationRectangle(SKRectI canvas) => new(
+            0, 0,
+            (float)double.Min(canvas.Height * Image!.Width / (double)Image.Height, canvas.Width),
+            (float)double.Min(canvas.Width * Image.Height / (double)Image.Width, canvas.Height)
+            );
 
     private void AddExclusion_OnClick(object sender, RoutedEventArgs e)
     {
@@ -163,5 +243,10 @@ public partial class TileSetConfigurationControl
                         and pressing `Remove`, you can remove it. By pressing clear, you can clear all entered
                         exclusions.
                         """, "Help", MessageBoxButton.OK, MessageBoxImage.Question);
+    }
+
+    private void Nud_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        Canvas.InvalidateVisual();
     }
 }

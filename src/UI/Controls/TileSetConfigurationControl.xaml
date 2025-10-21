@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SekaiLayer.UI.Controls"
              xmlns:xcd="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="600"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
@@ -14,8 +15,8 @@
             <RowDefinition Height="2" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Height="95">
+        <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
+            <StackPanel Orientation="Horizontal" Height="95">
             <GroupBox Header="Sample count" Margin="5">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -28,10 +29,12 @@
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" Grid.Column="0" Content="x-sample count:" />
                     <xcd:IntegerUpDown Grid.Row="0" Grid.Column="1" Margin="5"
-                                       Minimum="1" Maximum="256" x:Name="XCountNud" />
+                                       Minimum="1" Maximum="256" x:Name="XCountNud"
+                                       ValueChanged="Nud_OnValueChanged" />
                     <Label Grid.Row="1" Grid.Column="0" Content="y-sample count:" />
                     <xcd:IntegerUpDown Grid.Row="1" Grid.Column="1" Margin="5"
-                                       Minimum="1" Maximum="256" x:Name="YCountNud" />
+                                       Minimum="1" Maximum="256" x:Name="YCountNud"
+                                       ValueChanged="Nud_OnValueChanged" />
                 </Grid>
             </GroupBox>
             <GroupBox Header="Exclusions" Margin="5">
@@ -69,6 +72,7 @@
         </StackPanel>
         </ScrollViewer>
         <Border Grid.Row="1" Background="Black" />
-        
+        <skia:SKElement Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                        PaintSurface="Canvas_OnPaintSurface" x:Name="Canvas" />
     </Grid>
 </UserControl>
