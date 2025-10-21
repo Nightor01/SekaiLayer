@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Media;
+﻿using System.Media;
 using System.Windows;
 using System.Windows.Input;
 using SekaiLayer.Types.Collections;
@@ -71,9 +70,10 @@ public partial class TileSetConfigurationControl
             return;
         }
         
-        // Cast added to avoid warning
-        double xDifference = (rect.Width / Image.Width) * (int)(Image.Width / xCount.Value);
-        double yDifference = (rect.Height / Image.Height) * (int)(Image.Height / yCount.Value);
+        int xRatio = Image.Width / xCount.Value;
+        double xDifference = (rect.Width / Image.Width) * xRatio;
+        int yRatio = Image.Height / yCount.Value;
+        double yDifference = (rect.Height / Image.Height) * yRatio;
 
         for (int x = 0; x <= xCount.Value; ++x)
         {
