@@ -1,11 +1,10 @@
 ﻿using System.Media;
 using System.Windows;
-using System.Windows.Controls;
 using SekaiLayer.Types.Collections;
 
 namespace SekaiLayer.UI.Controls;
 
-public partial class TileSetConfigurationControl : UserControl
+public partial class TileSetConfigurationControl
 {
     // TODO make as observable set
     public ObservableSet<Rect> ExcludedPoints { get; } = [];
