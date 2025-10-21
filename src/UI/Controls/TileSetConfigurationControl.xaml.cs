@@ -47,6 +47,7 @@ public partial class TileSetConfigurationControl
 
         XCountNud.Value = 1;
         YCountNud.Value = 1;
+        PerfectFit.Visibility = Visibility.Visible;
     }
     
     private void Canvas_OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
@@ -247,6 +248,11 @@ public partial class TileSetConfigurationControl
 
     private void Nud_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
+          PerfectFit.Visibility = XCountNud.Value is not null && YCountNud.Value is not null && Image is not null
+            && Image.Width % XCountNud.Value == 0 && Image.Height % YCountNud.Value == 0
+            ? Visibility.Visible
+            : Visibility.Hidden;
+        
         Canvas.InvalidateVisual();
     }
 }
