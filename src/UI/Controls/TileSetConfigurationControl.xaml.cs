@@ -1,15 +1,14 @@
-﻿using System.Collections.ObjectModel;
-using System.Media;
+﻿using System.Media;
 using System.Windows;
 using System.Windows.Controls;
-using Point = System.Drawing.Point;
+using SekaiLayer.Types.Collections;
 
 namespace SekaiLayer.UI.Controls;
 
 public partial class TileSetConfigurationControl : UserControl
 {
     // TODO make as observable set
-    public ObservableCollection<Point> ExcludedPoints { get; } = [];
+    public ObservableSet<Rect> ExcludedPoints { get; } = [];
     
     public TileSetConfigurationControl()
     {
@@ -41,8 +40,10 @@ public partial class TileSetConfigurationControl : UserControl
             {
                 return false;
             }
-
-            ExcludedPoints.Add(point!.Value);
+            
+            ExcludedPoints.Add(
+                new(point.Value, new Size(0, 0))
+                );
             return true;
         }
         
@@ -52,14 +53,10 @@ public partial class TileSetConfigurationControl : UserControl
         {
             return false;
         }
-
-        for (int x = range.Value.Item1.X; x <= range.Value.Item2.X; ++x)
-        {
-            for (int y = range.Value.Item1.Y; y <= range.Value.Item2.Y; ++y)
-            {
-                ExcludedPoints.Add(new Point(x, y));
-            }
-        }
+        
+        ExcludedPoints.Add(
+            new(range.Value.Item1, range.Value.Item2)
+            );
 
         return true;
     }
