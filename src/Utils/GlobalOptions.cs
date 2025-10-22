@@ -51,14 +51,13 @@ public static class GlobalOptions
 
         var selector = new T1();
 
-        var copyList = jsonTypeInfo.Properties.ToList();
-        
-        foreach (var property in copyList)
+        var allowList = jsonTypeInfo.Properties
+            .Where(x => selector.Properties.Contains(x.Name));
+        jsonTypeInfo.Properties.Clear();
+
+        foreach (var property in allowList)
         {
-            if (!selector.Properties.Contains(property.Name))
-            {
-                jsonTypeInfo.Properties.Remove(property);
-            }
+            jsonTypeInfo.Properties.Add(property);
         }
     }
 
