@@ -42,7 +42,7 @@ public static class GlobalOptions
         }
     }
 
-    private static void AllowOnlyProperties<T0, T1>(JsonTypeInfo jsonTypeInfo) where T1 : ISelectProperties<T0>, new()
+    private static void AllowOnlyProperties<T0, T1>(JsonTypeInfo jsonTypeInfo) where T1 : ISelectProperties, new()
     {
         if (jsonTypeInfo.Type != typeof(T0))
         {
@@ -62,12 +62,12 @@ public static class GlobalOptions
         }
     }
 
-    private interface ISelectProperties<T>
+    private interface ISelectProperties
     {
         public HashSet<string> Properties { get; } 
     }
 
-    private class SelectRectProperties : ISelectProperties<Rect>
+    private class SelectRectProperties : ISelectProperties
     {
         public HashSet<string> Properties =>
         [
