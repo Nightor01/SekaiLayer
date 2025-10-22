@@ -4,7 +4,6 @@ using SekaiLayer.Types;
 using SekaiLayer.UI.Windows;
 using SekaiLayer.Utils;
 using SkiaSharp;
-using Point = System.Drawing.Point;
 
 namespace SekaiLayer.UI.Controls;
 
@@ -17,7 +16,7 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
 
     private int _xCountValue = -1;
     private int _yCountValue = -1;
-    private List<Point> _excludedTiles = [];
+    private List<Rect> _excludedTiles = [];
 
     private int _xCount
     {
@@ -104,7 +103,7 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
 
         if (noXyCount)
         {
-            Dialogues.AddResourceError("Please configure the image count");
+            Dialogues.AddResourceError("Please configure the image sample counts");
             return false;
         }
 

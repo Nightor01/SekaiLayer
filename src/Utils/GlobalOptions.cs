@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using System.Windows;
 using SekaiLayer.Types.Data;
 
 namespace SekaiLayer.Utils;
@@ -13,6 +14,7 @@ public static class GlobalOptions
         WriteIndented = true,
         TypeInfoResolver = new DefaultJsonTypeInfoResolver()
             .WithAddedModifier(AddPolymorphicTypeInfo<AssetSettings>)
+            .WithAddedModifier(AllowOnlyProperties<Rect, SelectRectProperties>)
     };
 
     private static void AddPolymorphicTypeInfo<T>(JsonTypeInfo jsonTypeInfo)
@@ -38,5 +40,38 @@ public static class GlobalOptions
         {
             jsonTypeInfo.PolymorphismOptions.DerivedTypes.Add(t);
         }
+    }
+
+    private static void AllowOnlyProperties<T0, T1>(JsonTypeInfo jsonTypeInfo) where T1 : ISelectProperties<T0>, new()
+    {
+        if (jsonTypeInfo.Type != typeof(T0))
+        {
+            return;
+        }
+
+        var selector = new T1();
+
+        var copyList = jsonTypeInfo.Properties.ToList();
+        
+        foreach (var property in copyList)
+        {
+            if (!selector.Properties.Contains(property.Name))
+            {
+                jsonTypeInfo.Properties.Remove(property);
+            }
+        }
+    }
+
+    private interface ISelectProperties<T>
+    {
+        public HashSet<string> Properties { get; } 
+    }
+
+    private class SelectRectProperties : ISelectProperties<Rect>
+    {
+        public HashSet<string> Properties =>
+        [
+            "X", "Y", "Width", "Height"
+        ];
     }
 }

@@ -1,16 +1,16 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Data;
 using SekaiLayer.UI.Controls;
 using SkiaSharp;
-using Point = System.Drawing.Point;
 
 namespace SekaiLayer.UI.Windows;
 
 public partial class TileSetConfigurationDialog
 {
-    public int XCount = 0;
-    public int YCount = 0;
-    public List<Point> ExcludedTiles = [];
+    public int XCount { get; private set; } = -1;
+    public int YCount { get; private set; } = -1;
+    public List<Rect> ExcludedTiles { get; private set; } = [];
     
     public static readonly DependencyProperty ImageProperty = DependencyProperty.Register(
         nameof(Image),
@@ -22,7 +22,7 @@ public partial class TileSetConfigurationDialog
     public SKImage? Image
     {
         get => (SKImage)GetValue(ImageProperty);
-        set => SetValue(ImageProperty, value);
+        init => SetValue(ImageProperty, value);
     }
     
     public TileSetConfigurationDialog(SKImage image)
@@ -36,5 +36,30 @@ public partial class TileSetConfigurationDialog
                 );
         
         Image = image;
+        
+        TileSetConfigurationControl.ApplyOk += TileSetConfigurationControlOnApplyOk;
+        TileSetConfigurationControl.ApplyCancel += TileSetConfigurationControlOnApplyCancel;
+    }
+
+    private void TileSetConfigurationControlOnApplyCancel(object? sender, EventArgs e)
+    {
+        DialogResult = false;
+    }
+
+    private void TileSetConfigurationControlOnApplyOk(object? sender, EventArgs e)
+    {
+        XCount = TileSetConfigurationControl.XCount;
+        YCount = TileSetConfigurationControl.YCount;
+        ExcludedTiles = TileSetConfigurationControl.ExcludedTiles.ToList();
+
+        DialogResult = true;
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        base.OnClosing(e);
+        
+        TileSetConfigurationControl.ApplyOk -= TileSetConfigurationControlOnApplyOk;
+        TileSetConfigurationControl.ApplyCancel -= TileSetConfigurationControlOnApplyCancel;
     }
 }

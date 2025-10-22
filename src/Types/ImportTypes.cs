@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using System.Windows;
 
 namespace SekaiLayer.Types;
 
@@ -23,6 +23,6 @@ public static class ImportTypes
         string Path,
         int XCount,
         int YCount,
-        List<Point> Exclusions
+        List<Rect> Exclusions
     );
 }

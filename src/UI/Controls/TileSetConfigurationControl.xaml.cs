@@ -9,9 +9,11 @@ namespace SekaiLayer.UI.Controls;
 
 public partial class TileSetConfigurationControl
 {
+    public event EventHandler ApplyOk = delegate { }; 
+    public event EventHandler ApplyCancel = delegate { }; 
     public int XCount => XCountNud.Value ?? -1;
     public int YCount => YCountNud.Value ?? -1;
-    public ObservableSet<Rect> ExcludedPoints { get; } = [];
+    public ObservableSet<Rect> ExcludedTiles { get; } = [];
     
     public static readonly DependencyProperty ImageProperty = DependencyProperty.Register(
         nameof(Image),
@@ -122,7 +124,7 @@ public partial class TileSetConfigurationControl
                 return false;
             }
             
-            ExcludedPoints.Add(
+            ExcludedTiles.Add(
                 new(point.Value, new Size(0, 0))
                 );
             return true;
@@ -135,7 +137,7 @@ public partial class TileSetConfigurationControl
             return false;
         }
         
-        ExcludedPoints.Add(
+        ExcludedTiles.Add(
             new(range.Value.Item1, range.Value.Item2)
             );
 
@@ -173,21 +175,14 @@ public partial class TileSetConfigurationControl
             .Substring(1, text.Length - 2)
             .Split(';');
         
-        int[] values = numbers
-            .Select(x =>
-            {
-                if (!int.TryParse(x, out int value) || value < 0 || value >= XCountNud.Value)
-                    return -1;
-                return value;
-            })
-            .ToArray();
-
-        if (values.Length != 2 || values.Contains(-1))
-        {
+        if (numbers.Length != 2
+            || !int.TryParse(numbers[0], out var x) || !int.TryParse(numbers[1], out var y)
+            || x < 0 || x >= XCountNud.Value || y < 0 || y >= YCountNud.Value
+            ) {
             return null;
         }
         
-        return new Point(values[0], values[1]);
+        return new Point(x, y);
     }
 
     private void ExclusionBox_OnPreviewKeyUp(object sender, KeyEventArgs e)
@@ -211,12 +206,12 @@ public partial class TileSetConfigurationControl
 
     private void RemoveExclusion_OnClick(object sender, RoutedEventArgs e)
     {
-        ExcludedPoints.ExceptWith(ExclusionListDisplay.SelectedItems.AsQueryable().Cast<Rect>());
+        ExcludedTiles.ExceptWith(ExclusionListDisplay.SelectedItems.AsQueryable().Cast<Rect>());
     }
 
     private void ClearExclusion_OnClick(object sender, RoutedEventArgs e)
     {
-        ExcludedPoints.Clear();
+        ExcludedTiles.Clear();
     }
 
     private void Help_OnClick(object sender, RoutedEventArgs e)
@@ -254,5 +249,15 @@ public partial class TileSetConfigurationControl
             : Visibility.Hidden;
         
         Canvas.InvalidateVisual();
+    }
+
+    private void Ok_OnClick(object sender, RoutedEventArgs e)
+    {
+        ApplyOk(this, e);
+    }
+
+    private void Cancel_OnClick(object sender, RoutedEventArgs e)
+    {
+        ApplyCancel(this, e);
     }
 }
