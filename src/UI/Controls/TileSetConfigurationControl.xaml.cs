@@ -1,4 +1,5 @@
-﻿using System.Media;
+﻿using System.Collections.Specialized;
+using System.Media;
 using System.Windows;
 using System.Windows.Input;
 using SekaiLayer.Types.Collections;
@@ -21,6 +22,7 @@ public partial class TileSetConfigurationControl
         get => YCountNud.Value ?? -1;
         set => YCountNud.Value = value;
     }
+
     public ObservableSet<Rect> ExcludedTiles { get; } = [];
 
     public bool CanBeCancelled
@@ -59,19 +61,22 @@ public partial class TileSetConfigurationControl
         StrokeWidth = 2,
         Style = SKPaintStyle.Stroke
     };
-    
-    public TileSetConfigurationControl()
+
+    private static readonly SKPaint _exclusionPaint = new()
     {
-        InitializeComponent();
+        Color = new SKColor(255, 0, 0, 64),
+        Style = SKPaintStyle.Fill
+    };
 
-        XCountNud.Value = 1;
-        YCountNud.Value = 1;
-        PerfectFit.Visibility = Visibility.Visible;
+    public TileSetConfigurationControl() : this(1, 1, [])
+    {
     }
-
+    
     public TileSetConfigurationControl(int xCount, int yCount, List<Rect> exclusions)
     {
         InitializeComponent();
+    
+        ExcludedTiles.CollectionChanged += ExcludedTilesOnCollectionChanged;
         
         XCountNud.Value = xCount;
         YCountNud.Value = yCount;
@@ -81,7 +86,12 @@ public partial class TileSetConfigurationControl
             ExcludedTiles.Add(exclusion);
         }
     }
-    
+
+    private void ExcludedTilesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        Nud_OnValueChanged(sender!, new RoutedPropertyChangedEventArgs<object>(e.OldItems!, e.NewItems!));
+    }
+
     private void Canvas_OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
     {
         if (Image is null)
@@ -118,6 +128,16 @@ public partial class TileSetConfigurationControl
         {
             float yPos = (float)(y * yDifference);
             canvas.DrawLine(0, yPos, (float)(xCount * xDifference), yPos, _linePaint);
+        }
+
+        foreach (var tile in ExcludedTiles)
+        {
+            canvas.DrawRect(new(
+                (float)(tile.X * xDifference),
+                (float)((tile.Y + tile.Height + 1) * yDifference),
+                (float)((tile.X + tile.Width + 1) * xDifference),
+                (float)(tile.Y * yDifference)
+                ) , _exclusionPaint);
         }
         
         canvas.DrawRect(rect, _rectPaint);
@@ -290,5 +310,10 @@ public partial class TileSetConfigurationControl
     private void Cancel_OnClick(object sender, RoutedEventArgs e)
     {
         ApplyCancel(this, e);
+    }
+
+    private void TileSetConfigurationControl_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        ExcludedTiles.CollectionChanged -= ExcludedTilesOnCollectionChanged;
     }
 }
