@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 using H.NotifyIcon;
+using JNS;
+using JNS.Attributes;
 using SekaiLayer.Services;
-using SekaiLayer.Types;
 using SekaiLayer.Types.Data;
 using SekaiLayer.Types.Exceptions;
 using SekaiLayer.UI.Controls;

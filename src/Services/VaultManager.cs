@@ -15,16 +15,26 @@ public class VaultManager
     private readonly VaultEntry _entry;
     private readonly VaultConfiguration _config;
 
-    private static readonly JsonSerializerOptions _options = GlobalOptions.JsonSerializer();
+    private static readonly JsonSerializerOptions _options;
     private const string _generalConfigFile = "config.json";
     private const string _configDir = "Config";
-    private static readonly string _configFile = Path.Combine(_configDir, _generalConfigFile);
+    private static readonly string _configFile;
     private const string _assetsDir = "Assets";
     private const string _worldsDir = "Worlds";
 
     public string VaultPath => _entry.Path;
     public string VaultName => _entry.Name;
-    public IReadOnlyDictionary<Guid, string> Dictionary => _config.Dictionary; 
+    public IReadOnlyDictionary<Guid, Guid> Dictionary => _config.Dictionary;
+
+    static VaultManager()
+    {
+        _configFile = Path.Combine(_configDir, _generalConfigFile);
+        _options = GlobalOptions.JsonSerializer(
+            GlobalOptions.Json.Default,
+            GlobalOptions.Json.RectangleSerialization,
+            GlobalOptions.Json.PolymorphicAssetSettings
+        );
+    }
     
     /// <exception cref="VaultManagerException"></exception>
     public VaultManager(VaultEntry entry)
@@ -37,6 +47,28 @@ public class VaultManager
         }
 
         _config = GetVaultConfiguration();
+    }
+
+    /// <exception cref="VaultManagerException"></exception> 
+    public (AssetSettings, string)? GetAssetSettings(VaultObjectIdentifier asset)
+    {
+        if (!Dictionary.TryGetValue(asset.Id, out var groupId))
+        {
+            throw new VaultManagerException("Asset group not found.");
+        }
+
+        VaultObjectIdentifier group = GetGroupIdentifier(groupId);
+        
+        var config = GetGroupConfig(group);
+
+        AssetSettings? settings = config.FirstOrDefault(x => x.Id.Id == asset.Id);
+
+        if (settings is null)
+        {
+            return null;
+        }
+        
+        return (settings, GetGroupAssetFilePath(VaultPath, group.Name, settings.FileName));
     }
 
     /// <exception cref="VaultManagerException"></exception> 
@@ -79,6 +111,36 @@ public class VaultManager
         });
         
         SaveConfiguration();
+    }
+
+    /// <exception cref="VaultManagerException"></exception> 
+    public void UpdateAsset(AssetSettings settings)
+    {
+        if (!Dictionary.TryGetValue(settings.Id.Id, out var groupId))
+        {
+            throw new VaultManagerException("Asset group not found.");
+        }
+        
+        VaultObjectIdentifier group = GetGroupIdentifier(groupId);
+        
+        var list = GetGroupConfig(group);
+        
+        var (index, asset) = list
+            .Index()
+            .FirstOrDefault(x => x.Item.Id.Id == settings.Id.Id
+                                 && x.Item.FileName == settings.FileName
+                                 && x.Item.Id.Type ==  settings.Id.Type
+                                 );
+
+        // TODO: Does it work like this here?
+        if (asset is null)
+        {
+            throw new VaultManagerException("Asset could not be found");
+        }
+
+        list[index] = settings;
+        
+        GroupConfigUpdate(group, list);
     }
     
     /// <exception cref="VaultManagerException"></exception> 
@@ -179,7 +241,7 @@ public class VaultManager
         try
         {
             string contents = File.ReadAllText(GetConfigFilePath(VaultPath));
-            configuration = JsonSerializer.Deserialize<VaultConfiguration>(contents);
+            configuration = JsonSerializer.Deserialize<VaultConfiguration>(contents, _options);
 
             if (configuration is null)
                 throw new VaultManagerException("Vault could not be deserialized from JSON");
@@ -322,7 +384,7 @@ public class VaultManager
         try
         {
             string contents = File.ReadAllText(path);
-            groupConfig = JsonSerializer.Deserialize<List<AssetSettings>>(contents);
+            groupConfig = JsonSerializer.Deserialize<List<AssetSettings>>(contents, _options);
 
             if (groupConfig is null)
                 throw new VaultManagerException("Group configuration could not be deserialized from JSON");
@@ -382,7 +444,7 @@ public class VaultManager
         
         GroupConfigUpdate(group, config);
         
-        _config.Dictionary.Add(fileId, group.Name);
+        _config.Dictionary.Add(fileId, group.Id);
         SaveConfiguration();
     }
 
@@ -412,6 +474,19 @@ public class VaultManager
         }
     }
 
+    /// <exception cref="VaultManagerException"></exception>
+    private VaultObjectIdentifier GetGroupIdentifier(Guid guid)
+    {
+        VaultObjectIdentifier? group = GetAssetGroups().FirstOrDefault(x => x.Id == guid);
+
+        if (group is null)
+        {
+            throw new VaultManagerException("Asset group not found.");
+        }
+
+        return group;
+    }
+    
     private static string GetGroupAssetFilePath(string path, string group, string fileName)
     {
         return Path.Combine(path, _assetsDir, group, fileName);

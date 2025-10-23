@@ -7,6 +7,7 @@ using SekaiLayer.Types;
 using SekaiLayer.UI.Controls;
 using SekaiLayer.Types.Collections;
 using SekaiLayer.Types.Exceptions;
+using SekaiLayer.UI.Controls.FriendlyEncapsulation;
 
 namespace SekaiLayer.UI.Windows;
 
@@ -121,17 +122,23 @@ public partial class VaultWindow
         {
             Header = obj.Name,
             Id = obj.Id,
-            Content = GetContentControl(obj.Type)
+            Content = GetContentControl(obj)
         };
 
         _tabControlData.Add(tabItem);
         TabControl.SelectedIndex = 0;
     }
 
-    private Control GetContentControl(VaultObjectIdentifier.ObjectType type)
+    private Control GetContentControl(VaultObjectIdentifier id)
     {
-        return new Label() { Content = type.ToString() };
-        // TODO
+        return id.Type switch
+        {
+            VaultObjectIdentifier.ObjectType.TileSet
+                => new TileSetControlManager(id, _vaultManager).Control,
+            
+            // TODO
+            _ => new Label() { Content = id.Type.ToString() } 
+        };
     }
 
     private void TabItemRemove(object sender, MouseButtonEventArgs e)

@@ -1,45 +1,60 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using System.Windows;
+using JNS;
 using SekaiLayer.Types.Data;
 
 namespace SekaiLayer.Utils;
 
 public static class GlobalOptions
 {
-    public static JsonSerializerOptions JsonSerializer() => new()
+    private static readonly JnsServer _server = new([typeof(AssetSettings), typeof(TileSetSettings)]);
+    
+    public enum Json
     {
-        WriteIndented = true,
-        TypeInfoResolver = new DefaultJsonTypeInfoResolver()
-            .WithAddedModifier(AddPolymorphicTypeInfo<AssetSettings>)
-            .WithAddedModifier(AllowOnlyProperties<Rect, SelectRectProperties>)
-    };
+        Default,
+        RectangleSerialization,
+        PolymorphicAssetSettings,
+    }
+    
+    public static JsonSerializerOptions JsonSerializer(params Json[] selectedOptions)
+    {
+        var jsonOptions = new JsonSerializerOptions();
 
-    private static void AddPolymorphicTypeInfo<T>(JsonTypeInfo jsonTypeInfo)
-    {
-        if (!typeof(T).IsAssignableFrom(jsonTypeInfo.Type) || jsonTypeInfo.Type.IsSealed)
+        foreach (var option in selectedOptions)
         {
-            return;
+            switch (option)
+            {
+                case Json.Default: AddDefaultJsonSerializerOptions(jsonOptions); break;
+                case Json.RectangleSerialization: AddRectangleSerialization(jsonOptions); break;
+                case Json.PolymorphicAssetSettings: AddPolymorphicAssetSettings(jsonOptions); break;
+                
+                default: Debug.Assert(false, "An error in `GlobalOptions.JsonSerializer` was encountered"); break;
+            }
         }
         
-        jsonTypeInfo.PolymorphismOptions = new JsonPolymorphismOptions {
-            TypeDiscriminatorPropertyName = "$subtype",
-            IgnoreUnrecognizedTypeDiscriminators = true,
-            UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
-        };
-            
-        var types = Assembly
-            .GetExecutingAssembly()
-            .GetTypes()
-            .Where(t => t.IsSubclassOf(typeof(T)))
-            .Select(t => new JsonDerivedType(t, t.Name.ToLowerInvariant()));
+        return jsonOptions;
+    }
 
-        foreach (var t in types)
+    private static void AddPolymorphicAssetSettings(JsonSerializerOptions options)
+    {
+        foreach (var converter in _server.Converters)
         {
-            jsonTypeInfo.PolymorphismOptions.DerivedTypes.Add(t);
+            options.Converters.Add(converter);
         }
+    }
+    
+    private static void AddRectangleSerialization(JsonSerializerOptions options)
+    {
+        options.TypeInfoResolver ??= new DefaultJsonTypeInfoResolver();
+
+        options.TypeInfoResolver.WithAddedModifier(AllowOnlyProperties<Rect, SelectRectProperties>);
+    }
+
+    private static void AddDefaultJsonSerializerOptions(JsonSerializerOptions options)
+    {
+        options.WriteIndented = true;
     }
 
     private static void AllowOnlyProperties<T0, T1>(JsonTypeInfo jsonTypeInfo) where T1 : ISelectProperties, new()

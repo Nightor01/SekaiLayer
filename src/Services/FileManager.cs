@@ -10,7 +10,9 @@ namespace SekaiLayer.Services;
 
 public class FileManager
 {
-    private static readonly JsonSerializerOptions _options = GlobalOptions.JsonSerializer();
+    private static readonly JsonSerializerOptions _options = GlobalOptions.JsonSerializer(
+        GlobalOptions.Json.Default
+        );
     
     private readonly string _settingsPath;
     private readonly GlobalSettings _globalSettings;
@@ -110,7 +112,7 @@ public class FileManager
         try
         {
             string text = File.ReadAllText(_settingsPath);
-            settings = JsonSerializer.Deserialize<GlobalSettings>(text);
+            settings = JsonSerializer.Deserialize<GlobalSettings>(text, _options);
 
             if (settings is null)
                 throw new FileManagerException($"Entries read from {_settingsPath} ended up being `null`");

@@ -4,8 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Resources\icon_coloured.ico</ApplicationIcon>
   </PropertyGroup>
   
@@ -34,6 +34,7 @@
     <Resource Include="Resources\icon_coloured.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <None Remove="subprojects\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +42,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Remove="subprojects\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,6 +51,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Remove="subprojects\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +70,11 @@
       <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Remove="subprojects\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="subprojects\JNS\JNS.csproj" />
   </ItemGroup>
 
 </Project>

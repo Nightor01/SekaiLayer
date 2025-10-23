@@ -11,7 +11,7 @@
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="110" />
+            <RowDefinition Height="115" />
             <RowDefinition Height="2" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
