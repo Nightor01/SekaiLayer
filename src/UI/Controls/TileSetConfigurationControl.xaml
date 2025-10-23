@@ -80,7 +80,7 @@
             <GroupBox Header="Control" Margin="5">
                 <StackPanel Width="60">
                     <Button Content="Ok" Margin="5" Click="Ok_OnClick" />
-                    <Button Content="Cancel" Margin="5" Click="Cancel_OnClick" />
+                    <Button Content="Cancel" Margin="5" Click="Cancel_OnClick" x:Name="Cancel" />
                 </StackPanel>
             </GroupBox>
         </StackPanel>

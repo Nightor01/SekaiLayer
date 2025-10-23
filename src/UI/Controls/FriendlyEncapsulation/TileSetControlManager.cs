@@ -12,10 +12,7 @@ public class TileSetControlManager
 {
     private readonly (TileSetSettings, string) _settings;
     public Control Control => _control;
-    private TileSetConfigurationControl _control => new TileSetConfigurationControl()
-    {
-        Image = ReadImage(_settings.Item2)
-    }; 
+    private readonly TileSetConfigurationControl _control;
     
     private readonly VaultManager _vaultManager;
 
@@ -24,15 +21,26 @@ public class TileSetControlManager
         _vaultManager = manager;
         _settings = GetSettings(tileSet, manager);
         
-        // TODO add a way of turning cancel off
+        _control = new(_settings.Item1.XCount, _settings.Item1.YCount, _settings.Item1.Exclusions)
+        {
+            Image = ReadImage(_settings.Item2)
+        }; 
+        
         _control.ApplyOk += ControlOnApplyOk;
         _control.Unloaded += ControlOnUnloaded;
+        _control.Loaded += ControlOnLoaded;
+    }
+
+    private void ControlOnLoaded(object sender, RoutedEventArgs e)
+    {
+        _control.CanBeCancelled = false;
     }
 
     private void ControlOnUnloaded(object sender, RoutedEventArgs e)
     {
         _control.ApplyOk -= ControlOnApplyOk;
         _control.Unloaded -= ControlOnUnloaded;
+        _control.Loaded -= ControlOnLoaded;
     }
     
     private void ControlOnApplyOk(object? sender, EventArgs e)

@@ -10,10 +10,24 @@ namespace SekaiLayer.UI.Controls;
 public partial class TileSetConfigurationControl
 {
     public event EventHandler ApplyOk = delegate { }; 
-    public event EventHandler ApplyCancel = delegate { }; 
-    public int XCount => XCountNud.Value ?? -1;
-    public int YCount => YCountNud.Value ?? -1;
+    public event EventHandler ApplyCancel = delegate { };
+    public int XCount
+    {
+        get => XCountNud.Value ?? -1;
+        set => XCountNud.Value = value;
+    }
+    public int YCount
+    {
+        get => YCountNud.Value ?? -1;
+        set => YCountNud.Value = value;
+    }
     public ObservableSet<Rect> ExcludedTiles { get; } = [];
+
+    public bool CanBeCancelled
+    {
+        get => Cancel.Visibility == Visibility.Visible;
+        set => Cancel.Visibility = value ? Visibility.Visible : Visibility.Hidden;
+    }
     
     public static readonly DependencyProperty ImageProperty = DependencyProperty.Register(
         nameof(Image),
@@ -25,7 +39,11 @@ public partial class TileSetConfigurationControl
     public SKImage? Image
     {
         get => (SKImage)GetValue(ImageProperty);
-        set => SetValue(ImageProperty, value);
+        set
+        {
+            SetValue(ImageProperty, value);
+            Nud_OnValueChanged(this, new RoutedPropertyChangedEventArgs<object>(null!, null!));
+        }
     }
 
     private static readonly SKPaint _linePaint = new()
@@ -49,6 +67,19 @@ public partial class TileSetConfigurationControl
         XCountNud.Value = 1;
         YCountNud.Value = 1;
         PerfectFit.Visibility = Visibility.Visible;
+    }
+
+    public TileSetConfigurationControl(int xCount, int yCount, List<Rect> exclusions)
+    {
+        InitializeComponent();
+        
+        XCountNud.Value = xCount;
+        YCountNud.Value = yCount;
+        
+        foreach (var exclusion in exclusions)
+        {
+            ExcludedTiles.Add(exclusion);
+        }
     }
     
     private void Canvas_OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
