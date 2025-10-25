@@ -33,9 +33,9 @@ public class TileSetControlManager
 
     private void ControlOnApplyCancel(object? sender, EventArgs e)
     {
+        _control.ExcludedTiles.Clear();
         _control.XCount = _settings.Item1.XCount;
         _control.YCount = _settings.Item1.YCount;
-        _control.ExcludedTiles.Clear();
 
         foreach (var tile in _settings.Item1.Exclusions)
         {
