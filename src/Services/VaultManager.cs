@@ -31,7 +31,6 @@ public class VaultManager
         _configFile = Path.Combine(_configDir, _generalConfigFile);
         _options = GlobalOptions.JsonSerializer(
             GlobalOptions.Json.Default,
-            GlobalOptions.Json.RectangleSerialization,
             GlobalOptions.Json.PolymorphicAssetSettings
         );
     }
