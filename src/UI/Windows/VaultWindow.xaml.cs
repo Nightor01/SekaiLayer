@@ -135,6 +135,8 @@ public partial class VaultWindow
         {
             VaultObjectIdentifier.ObjectType.TileSet
                 => new TileSetControlManager(id, _vaultManager).Control,
+            VaultObjectIdentifier.ObjectType.Image
+                => new ImageControlManager(id, _vaultManager).Control,
             
             // TODO
             _ => new Label() { Content = id.Type.ToString() } 
