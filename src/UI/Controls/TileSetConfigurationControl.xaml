@@ -83,7 +83,7 @@
                         <ColumnDefinition Width="100" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
-                        <Button Content="Ok" Margin="5" Click="Ok_OnClick" />
+                        <Button Content="Ok" Margin="5" Click="Ok_OnClick" x:Name="Ok" />
                         <Button Content="Cancel" Margin="5" Click="Cancel_OnClick" x:Name="Cancel" />
                     </StackPanel>
                     <StackPanel Grid.Column="1">
@@ -91,7 +91,7 @@
                     </StackPanel>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="Miscellaneous">
+            <GroupBox Header="Miscellaneous" Margin="5">
                 <StackPanel Width="80">
                     <Label Content="Orientation:" />
                     <ComboBox SelectionChanged="Orientation_OnSelectionChanged" x:Name="CmbOrientation">

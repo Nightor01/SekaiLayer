@@ -3,6 +3,7 @@ using System.Media;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using SekaiLayer.Events;
 using SekaiLayer.Types.Collections;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
@@ -11,8 +12,8 @@ namespace SekaiLayer.UI.Controls;
 
 public partial class TileSetConfigurationControl
 {
-    public event EventHandler ApplyOk = delegate { }; 
-    public event EventHandler ApplyCancel = delegate { };
+    public event CancellableEventHandler ApplyOk = delegate { }; 
+    public event CancellableEventHandler ApplyCancel = delegate { };
     public int XCount
     {
         get => XCountNud.Value ?? -1;
@@ -39,10 +40,32 @@ public partial class TileSetConfigurationControl
     public SKImage? Image
     {
         get => (SKImage)GetValue(ImageProperty);
-        set
+        init
         {
             SetValue(ImageProperty, value);
             UpdateControl();
+            Updated = false;
+        }
+    }
+
+    private bool _updated;
+
+    public bool Updated
+    {
+        get => _updated;
+        private set
+        {
+            if (Ok is not null)
+            {
+                Ok.IsEnabled = value;
+            }
+
+            if (Cancel is not null)
+            {
+                Cancel.IsEnabled = value;
+            }
+            
+            _updated = value;
         }
     }
 
@@ -89,11 +112,11 @@ public partial class TileSetConfigurationControl
         Style = SKPaintStyle.StrokeAndFill
     };
 
-    public TileSetConfigurationControl() : this(1, 1, [])
+    public TileSetConfigurationControl() : this(1, 1, [], false)
     {
     }
     
-    public TileSetConfigurationControl(int xCount, int yCount, List<Point> exclusions)
+    public TileSetConfigurationControl(int xCount, int yCount, List<Point> exclusions, bool allowTurning)
     {
         InitializeComponent();
     
@@ -102,13 +125,23 @@ public partial class TileSetConfigurationControl
         
         PerfectFit.Visibility = Visibility.Visible;
         
+        Reset(xCount, yCount, exclusions, allowTurning);
+    }
+
+    public void Reset(int xCount, int yCount, List<Point> exclusions, bool allowTurning)
+    {
+        ExcludedTiles.Clear();
+        
         XCountNud.Value = xCount;
         YCountNud.Value = yCount;
+        AllowTurning = allowTurning;
         
         foreach (var exclusion in exclusions)
         {
             ExcludedTiles.Add(exclusion);
         }
+
+        Updated = false;
     }
 
     private void ExcludedTilesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -359,16 +392,35 @@ public partial class TileSetConfigurationControl
             : Visibility.Hidden;
         
         Canvas.InvalidateVisual();
+        Updated = true;
     }
 
     private void Ok_OnClick(object sender, RoutedEventArgs e)
     {
-        ApplyOk(this, e);
+        var args = new CancellableEventArgs();
+        
+        ApplyOk(this, args);
+
+        if (args.Canceled)
+        {
+            return;
+        }
+        
+        Updated = false;
     }
 
     private void Cancel_OnClick(object sender, RoutedEventArgs e)
     {
-        ApplyCancel(this, e);
+        var args = new CancellableEventArgs();
+        
+        ApplyCancel(this, args);
+
+        if (args.Canceled)
+        {
+            return;
+        }
+        
+        Updated = false;
     }
 
     private void Canvas_OnMouseDown(object sender, MouseButtonEventArgs e)
@@ -518,5 +570,6 @@ public partial class TileSetConfigurationControl
     private void Orientation_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         _allowTurnging = true;
+        Updated = true;
     }
 }

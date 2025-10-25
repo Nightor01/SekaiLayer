@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using SekaiLayer.Events;
 using SekaiLayer.Services;
 using SekaiLayer.Types;
 using SekaiLayer.Types.Data;
@@ -21,8 +22,9 @@ public class TileSetControlManager
         _vaultManager = manager;
         _settings = GetSettings(tileSet, manager);
         
-        _control = new(_settings.Item1.XCount, _settings.Item1.YCount, _settings.Item1.Exclusions)
-        {
+        _control = new(
+            _settings.Item1.XCount, _settings.Item1.YCount, _settings.Item1.Exclusions, _settings.Item1.AllowTurning
+            ) {
             Image = ReadImage(_settings.Item2)
         }; 
         
@@ -31,21 +33,40 @@ public class TileSetControlManager
         _control.ApplyCancel += ControlOnApplyCancel;
     }
 
-    private void ControlOnApplyCancel(object? sender, EventArgs e)
+    private void ControlOnApplyCancel(object? sender, CancellableEventArgs e)
     {
-        _control.ExcludedTiles.Clear();
-        _control.XCount = _settings.Item1.XCount;
-        _control.YCount = _settings.Item1.YCount;
-        _control.AllowTurning = _settings.Item1.AllowTurning;
-
-        foreach (var tile in _settings.Item1.Exclusions)
+        if (!_control.Updated)
         {
-            _control.ExcludedTiles.Add(tile);
+            return;
         }
+
+        MessageBoxResult result = MessageBox.Show("Are you sure you want to discard those changes?",
+            "Question", MessageBoxButton.YesNo, MessageBoxImage.Question
+            );
+
+        if (result != MessageBoxResult.Yes)
+        {
+            e.Cancel();
+            return;
+        }
+        
+        _control.Reset(
+            _settings.Item1.XCount, _settings.Item1.YCount, _settings.Item1.Exclusions, _settings.Item1.AllowTurning
+            );
     }
 
-    private void ControlOnApplyOk(object? sender, EventArgs e)
+    private void ControlOnApplyOk(object? sender, CancellableEventArgs e)
     {
+        if (!_control.Updated)
+        {
+            return;
+        }
+
+        if (!AskToContinue(e))
+        {
+            return;
+        }
+        
         var settings = _settings.Item1;
 
         settings = new TileSetSettings()
@@ -73,6 +94,27 @@ public class TileSetControlManager
         MessageBox.Show("The tileset has been updated successfully", "Success",
             MessageBoxButton.OK, MessageBoxImage.Information
             );
+    }
+
+    private bool AskToContinue(CancellableEventArgs e)
+    {
+        // TODO Check if tiles are in use
+        bool inUse = false;
+        if (inUse)
+        {
+            MessageBoxResult result = MessageBox.Show(
+                "Are you sure you want to continue? The tileset is currently in use.", "Question",
+                MessageBoxButton.YesNo, MessageBoxImage.Question
+            );
+
+            if (result != MessageBoxResult.Yes)
+            {
+                e.Cancel();
+                return false;
+            }
+        }
+
+        return true;
     }
     
     private static (TileSetSettings, string) GetSettings(VaultObjectIdentifier tileSet, VaultManager manager)
