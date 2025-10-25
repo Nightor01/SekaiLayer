@@ -296,7 +296,7 @@ public partial class TileSetConfigurationControl
                         
                         Removal of exclusions:
                         That can be done manually or within the exclusion display box. By selecting an exclusion
-                        and pressing `Remove`, you can remove it. By pressing clear, you can clear all entered
+                        and pressing `Remove`, you can remove it. By pressing `Clear`, you can clear all entered
                         exclusions.
                         """, "Help", MessageBoxButton.OK, MessageBoxImage.Question);
     }
