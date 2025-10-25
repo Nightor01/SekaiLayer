@@ -31,7 +31,7 @@
                      x:Name="VaultName" FontSize="14" />
         </DockPanel>
         <StackPanel Grid.Row="1" Margin="10, 0">     
-            <DockPanel Grid.Row="1" Height="30">
+            <DockPanel Height="30">
                 <Label DockPanel.Dock="Left" FontSize="14">Vault path</Label>
                 <Button Width="200" HorizontalAlignment="Right"
                         Content="Set Folder" Click="SetFolder_OnClick" FontSize="14"/>

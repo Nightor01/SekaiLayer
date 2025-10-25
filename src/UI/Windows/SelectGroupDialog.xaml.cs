@@ -2,7 +2,7 @@
 
 namespace SekaiLayer.UI.Windows;
 
-public partial class SelectGroupDialog : Window
+public partial class SelectGroupDialog
 {
     public int Index { get; private set; }
     public List<string> GroupNames { get; }

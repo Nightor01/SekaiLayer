@@ -43,7 +43,7 @@ public partial class AddResourceDialog
 
                 return attr is null
                     ? null
-                    : ((VaultObjectNameAttribute)attr!).Name;
+                    : ((VaultObjectNameAttribute)attr).Name;
             })
             .Where(v => v is not null)!
             .ToList<string>();

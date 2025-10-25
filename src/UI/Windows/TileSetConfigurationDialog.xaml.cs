@@ -11,7 +11,7 @@ public partial class TileSetConfigurationDialog
     public int XCount { get; private set; } = -1;
     public int YCount { get; private set; } = -1;
     public List<Point> ExcludedTiles { get; private set; } = [];
-    public bool AllowTurning { get; private set; } = false;
+    public bool AllowTurning { get; private set; }
     
     public static readonly DependencyProperty ImageProperty = DependencyProperty.Register(
         nameof(Image),

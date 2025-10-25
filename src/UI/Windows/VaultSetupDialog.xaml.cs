@@ -1,13 +1,11 @@
-﻿using Microsoft.Win32;
-using System.Windows;
-using SekaiLayer.Types;
+﻿using System.Windows;
 using SekaiLayer.Types.Data;
 
 namespace SekaiLayer.UI.Windows;
 
 public partial class VaultSetupDialog
 {
-    public VaultEntry? VaultConfig { get; private set; } = null;
+    public VaultEntry? VaultConfig { get; private set; }
     
     public VaultSetupDialog()
     {
