@@ -175,15 +175,16 @@ public partial class VaultWindow
 
         switch (type)
         {
-            case VaultObjectIdentifier.ObjectType.AssetGroup: AddAssetGroup(data); break;
+            case VaultObjectIdentifier.ObjectType.AssetGroup: AddAssetGroup(data); return;
             case VaultObjectIdentifier.ObjectType.Image: AddImageAsset(data); break;
             case VaultObjectIdentifier.ObjectType.TileSet: AddTileSetAsset(data); break;
+            case VaultObjectIdentifier.ObjectType.World: return;
             // TODO
             
             default: throw new NotImplementedException();
         }
         
-        LoadAllTreeViewItems();
+        // LoadAllTreeViewItems();
     }
 
     private void AddAssetGroup(object data)
@@ -199,9 +200,24 @@ public partial class VaultWindow
             MessageBox.Show("An error occured while trying to add asset group:\n" + e.Message,
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error
             );
+            return;
         }
+
+        var subTree = GetSubTree(TreeViewItems.Assets);
+        VaultObjectIdentifier group = _vaultManager
+            .GetAssetGroups()
+            .First(x => x.Name == typedData.Name);
+        subTree.Items.Add(MakeTreeViewItem(group));
     }
 
+    private void AddAssetToTreeView(TreeViewItem tvi, VaultObjectIdentifier group, string name)
+    {
+        VaultObjectIdentifier asset = _vaultManager
+            .GetAssetsFromGroup(group)
+            .First(x => x.Name == name);
+        tvi.Items.Add(MakeTreeViewItem(asset));
+    }
+    
     private void AddImageAsset(object data)
     {
         var typedData = (ImportTypes.Image)data;
@@ -223,7 +239,10 @@ public partial class VaultWindow
             MessageBox.Show("There was an error with adding this image.\n" + e.Message, 
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error
                 );
+            return;
         }
+
+        AddAssetToTreeView(tvi, group, typedData.Name);
     }
 
     private void AddTileSetAsset(object data)
@@ -248,6 +267,8 @@ public partial class VaultWindow
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error
             );
         }
+        
+        AddAssetToTreeView(tvi, group, typedData.Name);
     }
 
     private int GroupSelection()
