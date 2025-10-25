@@ -41,7 +41,7 @@ public partial class TileSetConfigurationControl
         set
         {
             SetValue(ImageProperty, value);
-            UpdatedSampleCounts();
+            UpdateControl();
         }
     }
     
@@ -70,6 +70,12 @@ public partial class TileSetConfigurationControl
         Style = SKPaintStyle.Fill
     };
 
+    private static readonly SKPaint _currentSelectionPaint = new()
+    {
+        Color = SKColors.Cyan.WithAlpha(64),
+        Style = SKPaintStyle.StrokeAndFill
+    };
+
     public TileSetConfigurationControl() : this(1, 1, [])
     {
     }
@@ -92,7 +98,7 @@ public partial class TileSetConfigurationControl
 
     private void ExcludedTilesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        UpdatedSampleCounts();
+        UpdateControl();
     }
 
     private void Canvas_OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
@@ -145,9 +151,38 @@ public partial class TileSetConfigurationControl
         
         canvas.DrawRect(rect, _rectPaint);
 
+        var selectionRect = new SKRect()
+        {
+            Left = (float)(_currentSelection.Left / _drawSize.Width * xDifference),
+            Top = (float)(_currentSelection.Top / _drawSize.Height * yDifference),
+            Right = (float)(_currentSelection.Right / _drawSize.Width * xDifference),
+            Bottom = (float)(_currentSelection.Bottom / _drawSize.Height * yDifference)
+        };
+        canvas.DrawRect(selectionRect, _currentSelectionPaint);
+        DrawInvertedRectangle(canvas, selectionRect);
+
         double xDrawRatio = Canvas.ActualWidth / e.Info.Rect.Width; 
         double yDrawRatio = Canvas.ActualHeight / e.Info.Rect.Height; 
         _drawSize = new(xDifference * xDrawRatio, yDifference * yDrawRatio);
+    }
+
+    private void DrawInvertedRectangle(SKCanvas canvas, SKRect rect)
+    {
+        DrawInvertedLine(canvas, new(rect.Left, rect.Top), new(rect.Left, rect.Bottom));
+        DrawInvertedLine(canvas, new(rect.Left, rect.Bottom), new(rect.Right, rect.Bottom));
+        DrawInvertedLine(canvas, new(rect.Right, rect.Bottom), new(rect.Right, rect.Top));
+        DrawInvertedLine(canvas, new(rect.Right, rect.Top), new(rect.Left, rect.Top));
+    }
+    
+    private void DrawInvertedLine(SKCanvas canvas, SKPoint p1, SKPoint p2)
+    {
+        using var paint = new SKPaint();
+        
+        paint.Color = SKColors.White;
+        paint.StrokeWidth = 3;
+        paint.BlendMode = SKBlendMode.Difference;
+
+        canvas.DrawLine(p1, p2, paint);
     }
 
     private SKRect GetDestinationRectangle(SKRectI canvas) => new(
@@ -301,7 +336,7 @@ public partial class TileSetConfigurationControl
                         """, "Help", MessageBoxButton.OK, MessageBoxImage.Question);
     }
 
-    private void UpdatedSampleCounts()
+    private void UpdateControl()
     {
           PerfectFit.Visibility = XCountNud.Value is not null && YCountNud.Value is not null && Image is not null
             && Image.Width % XCountNud.Value == 0 && Image.Height % YCountNud.Value == 0
@@ -385,6 +420,7 @@ public partial class TileSetConfigurationControl
         _makingSelection = false;
         _currentSelection = new Rect();
         Canvas.ReleaseMouseCapture();
+        UpdateControl();
     }
 
     private void Canvas_OnMouseMove(object sender, MouseEventArgs e)
@@ -402,6 +438,7 @@ public partial class TileSetConfigurationControl
         if (p.Y > Canvas.Height) p.X = Canvas.Height;
 
         _currentSelection = new Rect(_origin, p);
+        UpdateControl();
     }
     
     /// <returns>True if the user wishes to continue</returns>
@@ -441,7 +478,7 @@ public partial class TileSetConfigurationControl
         
         _xOldCount = -1;
         
-        UpdatedSampleCounts();
+        UpdateControl();
     }
 
     private void YCountNud_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -460,6 +497,6 @@ public partial class TileSetConfigurationControl
         
         _yOldCount = -1;
         
-        UpdatedSampleCounts();
+        UpdateControl();
     }
 }
