@@ -36,6 +36,7 @@ public class TileSetControlManager
         _control.ExcludedTiles.Clear();
         _control.XCount = _settings.Item1.XCount;
         _control.YCount = _settings.Item1.YCount;
+        _control.AllowTurning = _settings.Item1.AllowTurning;
 
         foreach (var tile in _settings.Item1.Exclusions)
         {
@@ -54,6 +55,7 @@ public class TileSetControlManager
             Exclusions = _control.ExcludedTiles.ToList(),
             FileName = settings.FileName,
             Id = settings.Id,
+            AllowTurning = _control.AllowTurning
         };
 
         try

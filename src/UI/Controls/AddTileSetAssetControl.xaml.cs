@@ -17,6 +17,7 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
     private int _xCountValue = -1;
     private int _yCountValue = -1;
     private List<Point> _excludedTiles = [];
+    private bool _allowTurning = false;
 
     private int _xCount
     {
@@ -72,6 +73,7 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
         _xCount = dialog.XCount;
         _yCount = dialog.YCount;
         _excludedTiles = dialog.ExcludedTiles;
+        _allowTurning = dialog.AllowTurning;
     }
 
     private void ShowImageError()
@@ -117,7 +119,8 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
             PathSelector.FilePath,
             _xCount,
             _yCount,
-            _excludedTiles
+            _excludedTiles,
+            _allowTurning
             );
     }
 }

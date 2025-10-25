@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Media;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using SekaiLayer.Types.Collections;
 using SkiaSharp;
@@ -44,7 +45,19 @@ public partial class TileSetConfigurationControl
             UpdateControl();
         }
     }
-    
+
+    private bool _allowTurnging;
+
+    public bool AllowTurning
+    {
+        get => _allowTurnging;
+        set
+        {
+            CmbOrientation.SelectedIndex = value ? 1 : 0;
+            _allowTurnging = value;
+        }
+    }
+
     private Rect _currentSelection;
     private Point _origin;
     private bool _makingSelection;
@@ -86,6 +99,8 @@ public partial class TileSetConfigurationControl
     
         // TODO remove when not needed
         ExcludedTiles.CollectionChanged += ExcludedTilesOnCollectionChanged;
+        
+        PerfectFit.Visibility = Visibility.Visible;
         
         XCountNud.Value = xCount;
         YCountNud.Value = yCount;
@@ -498,5 +513,10 @@ public partial class TileSetConfigurationControl
         _yOldCount = -1;
         
         UpdateControl();
+    }
+
+    private void Orientation_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        _allowTurnging = true;
     }
 }

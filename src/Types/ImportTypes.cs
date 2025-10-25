@@ -23,6 +23,7 @@ public static class ImportTypes
         string Path,
         int XCount,
         int YCount,
-        List<Point> Exclusions
+        List<Point> Exclusions,
+        bool AllowTurning
     );
 }
