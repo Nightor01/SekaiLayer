@@ -23,6 +23,6 @@ public static class ImportTypes
         string Path,
         int XCount,
         int YCount,
-        List<Rect> Exclusions
+        List<Point> Exclusions
     );
 }

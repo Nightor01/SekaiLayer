@@ -23,7 +23,7 @@ public partial class TileSetConfigurationControl
         set => YCountNud.Value = value;
     }
 
-    public ObservableSet<Rect> ExcludedTiles { get; } = [];
+    public ObservableSet<Point> ExcludedTiles { get; } = [];
 
     public bool CanBeCancelled
     {
@@ -47,6 +47,11 @@ public partial class TileSetConfigurationControl
             Nud_OnValueChanged(this, new RoutedPropertyChangedEventArgs<object>(null!, null!));
         }
     }
+    
+    private Rect _currentSelection;
+    private Point _origin;
+    private bool _makingSelection;
+    private Size _drawSize = Size.Empty;
 
     private static readonly SKPaint _linePaint = new()
     {
@@ -72,10 +77,11 @@ public partial class TileSetConfigurationControl
     {
     }
     
-    public TileSetConfigurationControl(int xCount, int yCount, List<Rect> exclusions)
+    public TileSetConfigurationControl(int xCount, int yCount, List<Point> exclusions)
     {
         InitializeComponent();
     
+        // TODO remove when not needed
         ExcludedTiles.CollectionChanged += ExcludedTilesOnCollectionChanged;
         
         XCountNud.Value = xCount;
@@ -134,13 +140,17 @@ public partial class TileSetConfigurationControl
         {
             canvas.DrawRect(new(
                 (float)(tile.X * xDifference),
-                (float)((tile.Y + tile.Height + 1) * yDifference),
-                (float)((tile.X + tile.Width + 1) * xDifference),
+                (float)((tile.Y + 1) * yDifference),
+                (float)((tile.X + 1) * xDifference),
                 (float)(tile.Y * yDifference)
                 ) , _exclusionPaint);
         }
         
         canvas.DrawRect(rect, _rectPaint);
+
+        double xDrawRatio = Canvas.ActualWidth / e.Info.Rect.Width; 
+        double yDrawRatio = Canvas.ActualHeight / e.Info.Rect.Height; 
+        _drawSize = new(xDifference * xDrawRatio, yDifference * yDrawRatio);
     }
 
     private SKRect GetDestinationRectangle(SKRectI canvas) => new(
@@ -175,9 +185,7 @@ public partial class TileSetConfigurationControl
                 return false;
             }
             
-            ExcludedTiles.Add(
-                new(point.Value, new Size(0, 0))
-                );
+            ExcludedTiles.Add(point.Value);
             return true;
         }
         
@@ -187,10 +195,14 @@ public partial class TileSetConfigurationControl
         {
             return false;
         }
-        
-        ExcludedTiles.Add(
-            new(range.Value.Item1, range.Value.Item2)
-            );
+
+        for (int x = 0; range.Value.Item1.X <= range.Value.Item2.X; ++x)
+        {
+            for (int y = 0; range.Value.Item1.Y <= range.Value.Item2.Y; ++y)
+            {
+                ExcludedTiles.Add(new(x, y));
+            }
+        }
 
         return true;
     }
@@ -257,7 +269,7 @@ public partial class TileSetConfigurationControl
 
     private void RemoveExclusion_OnClick(object sender, RoutedEventArgs e)
     {
-        ExcludedTiles.ExceptWith(ExclusionListDisplay.SelectedItems.AsQueryable().Cast<Rect>());
+        ExcludedTiles.ExceptWith(ExclusionListDisplay.SelectedItems.AsQueryable().Cast<Point>());
     }
 
     private void ClearExclusion_OnClick(object sender, RoutedEventArgs e)
@@ -312,8 +324,86 @@ public partial class TileSetConfigurationControl
         ApplyCancel(this, e);
     }
 
-    private void TileSetConfigurationControl_OnUnloaded(object sender, RoutedEventArgs e)
+    private void Canvas_OnMouseDown(object sender, MouseButtonEventArgs e)
     {
-        ExcludedTiles.CollectionChanged -= ExcludedTilesOnCollectionChanged;
+        if (Manual.IsChecked != true)
+        {
+            return;
+        }
+        
+        _origin = e.GetPosition(Canvas);
+        _currentSelection = new Rect(_origin, _origin);
+        
+        _makingSelection = true;
+        Canvas.CaptureMouse();
+    }
+
+    private void Canvas_OnMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        if (!_makingSelection)
+        {
+            return;
+        }
+        
+        var xStart = (int)(_currentSelection.X / _drawSize.Width);
+        var yStart = (int)(_currentSelection.Y / _drawSize.Height);
+        var xEnd = (int)((_currentSelection.Width + _currentSelection.X) / _drawSize.Width);
+        var yEnd = (int)((_currentSelection.Height + _currentSelection.Y) / _drawSize.Height);
+
+        if (xEnd > XCount)
+        {
+            xEnd = XCount;
+        } 
+        if (yEnd > YCount)
+        {
+            yEnd = YCount;
+        }
+
+        bool allContained = true;
+        List<Point> selectedPoints = [];
+        for (int x = xStart; x <= xEnd; ++x)
+        {
+            for (int y = yStart; y <= yEnd; ++y)
+            {
+                var p = new Point(x, y);
+
+                if (!ExcludedTiles.Contains(p))
+                {
+                    allContained = false;
+                }
+                
+                selectedPoints.Add(p);
+            }
+        }
+
+        if (allContained)
+        {
+            ExcludedTiles.ExceptWith(selectedPoints);
+        }
+        else
+        {
+            ExcludedTiles.UnionWith(selectedPoints);   
+        }
+        
+        _makingSelection = false;
+        _currentSelection = new Rect();
+        Canvas.ReleaseMouseCapture();
+    }
+
+    private void Canvas_OnMouseMove(object sender, MouseEventArgs e)
+    {
+        if (!_makingSelection)
+        {
+            return;
+        }
+
+        Point p = e.GetPosition(Canvas);
+
+        if (p.X < 0) p.X = 0; 
+        if (p.Y < 0) p.Y = 0; 
+        if (p.X > Canvas.Width) p.X = Canvas.Width; 
+        if (p.Y > Canvas.Height) p.X = Canvas.Height;
+
+        _currentSelection = new Rect(_origin, p);
     }
 }

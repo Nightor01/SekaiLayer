@@ -16,7 +16,7 @@ public partial class AddTileSetAssetControl : IValidatable, INotifyPropertyChang
 
     private int _xCountValue = -1;
     private int _yCountValue = -1;
-    private List<Rect> _excludedTiles = [];
+    private List<Point> _excludedTiles = [];
 
     private int _xCount
     {

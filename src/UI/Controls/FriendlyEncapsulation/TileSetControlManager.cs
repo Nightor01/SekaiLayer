@@ -26,21 +26,14 @@ public class TileSetControlManager
             Image = ReadImage(_settings.Item2)
         }; 
         
+        // TODO remove
         _control.ApplyOk += ControlOnApplyOk;
-        _control.Unloaded += ControlOnUnloaded;
         _control.Loaded += ControlOnLoaded;
     }
 
     private void ControlOnLoaded(object sender, RoutedEventArgs e)
     {
         _control.CanBeCancelled = false;
-    }
-
-    private void ControlOnUnloaded(object sender, RoutedEventArgs e)
-    {
-        _control.ApplyOk -= ControlOnApplyOk;
-        _control.Unloaded -= ControlOnUnloaded;
-        _control.Loaded -= ControlOnLoaded;
     }
     
     private void ControlOnApplyOk(object? sender, EventArgs e)
