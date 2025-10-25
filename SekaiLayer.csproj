@@ -27,6 +27,7 @@
     <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
     <PackageReference Include="H.NotifyIcon.Wpf" Version="2.3.1" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="3.119.2-preview.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
   </ItemGroup>
 
   <ItemGroup>
