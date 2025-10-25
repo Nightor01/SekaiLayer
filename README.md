@@ -1,2 +1,2 @@
-# SekaiLayer
-SekaiLayer – Create your own fabulous worlds from tiles and tilemaps.
+# Sekai-Layer
+Sekai-Layer – Create your own fabulous worlds from tiles and tilemaps.
