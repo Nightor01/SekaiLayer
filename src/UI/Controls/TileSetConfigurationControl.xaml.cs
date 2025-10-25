@@ -17,19 +17,16 @@ public partial class TileSetConfigurationControl
         get => XCountNud.Value ?? -1;
         set => XCountNud.Value = value;
     }
+    private int _xOldCount = -1;
     public int YCount
     {
         get => YCountNud.Value ?? -1;
         set => YCountNud.Value = value;
     }
 
-    public ObservableSet<Point> ExcludedTiles { get; } = [];
+    private int _yOldCount = -1;
 
-    public bool CanBeCancelled
-    {
-        get => Cancel.Visibility == Visibility.Visible;
-        set => Cancel.Visibility = value ? Visibility.Visible : Visibility.Hidden;
-    }
+    public ObservableSet<Point> ExcludedTiles { get; } = [];
     
     public static readonly DependencyProperty ImageProperty = DependencyProperty.Register(
         nameof(Image),
@@ -44,7 +41,7 @@ public partial class TileSetConfigurationControl
         set
         {
             SetValue(ImageProperty, value);
-            Nud_OnValueChanged(this, new RoutedPropertyChangedEventArgs<object>(null!, null!));
+            UpdatedSampleCounts();
         }
     }
     
@@ -95,7 +92,7 @@ public partial class TileSetConfigurationControl
 
     private void ExcludedTilesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        Nud_OnValueChanged(sender!, new RoutedPropertyChangedEventArgs<object>(e.OldItems!, e.NewItems!));
+        UpdatedSampleCounts();
     }
 
     private void Canvas_OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
@@ -304,7 +301,7 @@ public partial class TileSetConfigurationControl
                         """, "Help", MessageBoxButton.OK, MessageBoxImage.Question);
     }
 
-    private void Nud_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    private void UpdatedSampleCounts()
     {
           PerfectFit.Visibility = XCountNud.Value is not null && YCountNud.Value is not null && Image is not null
             && Image.Width % XCountNud.Value == 0 && Image.Height % YCountNud.Value == 0
@@ -350,13 +347,13 @@ public partial class TileSetConfigurationControl
         var xEnd = (int)((_currentSelection.Width + _currentSelection.X) / _drawSize.Width);
         var yEnd = (int)((_currentSelection.Height + _currentSelection.Y) / _drawSize.Height);
 
-        if (xEnd > XCount)
+        if (xEnd >= XCount)
         {
-            xEnd = XCount;
+            xEnd = XCount - 1;
         } 
-        if (yEnd > YCount)
+        if (yEnd >= YCount)
         {
-            yEnd = YCount;
+            yEnd = YCount - 1;
         }
 
         bool allContained = true;
@@ -405,5 +402,64 @@ public partial class TileSetConfigurationControl
         if (p.Y > Canvas.Height) p.X = Canvas.Height;
 
         _currentSelection = new Rect(_origin, p);
+    }
+    
+    /// <returns>True if the user wishes to continue</returns>
+    private bool Nud_OnChangedWarning()
+    {
+        if (WarningDisabler.IsChecked == true)
+        {
+            return true;
+        }
+        
+        MessageBoxResult result = MessageBox.Show(
+            "The entered excluded tiles may become invalid after this operation. Continue?",
+            "Question", MessageBoxButton.YesNo, MessageBoxImage.Question
+        );
+
+        if (result != MessageBoxResult.Yes)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void XCountNud_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (XCountNud.Value == _xOldCount)
+        {
+            return;
+        }
+        
+        if (ExcludedTiles.Any() && !Nud_OnChangedWarning())
+        {
+            _xOldCount = (int)e.OldValue;
+            XCountNud.Value = (int)e.OldValue;
+            return;
+        }
+        
+        _xOldCount = -1;
+        
+        UpdatedSampleCounts();
+    }
+
+    private void YCountNud_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (YCountNud.Value == _yOldCount)
+        {
+            return;
+        }
+        
+        if (ExcludedTiles.Any() && !Nud_OnChangedWarning())
+        {
+            _yOldCount = (int)e.OldValue;
+            YCountNud.Value = (int)e.OldValue;
+            return;
+        }
+        
+        _yOldCount = -1;
+        
+        UpdatedSampleCounts();
     }
 }

@@ -30,11 +30,11 @@
                     <Label Grid.Row="0" Grid.Column="0" Content="x-sample count:" />
                     <xcd:IntegerUpDown Grid.Row="0" Grid.Column="1" Margin="5"
                                        Minimum="1" Maximum="256" x:Name="XCountNud"
-                                       ValueChanged="Nud_OnValueChanged" />
+                                       ValueChanged="XCountNud_OnValueChanged" />
                     <Label Grid.Row="1" Grid.Column="0" Content="y-sample count:" />
                     <xcd:IntegerUpDown Grid.Row="1" Grid.Column="1" Margin="5"
                                        Minimum="1" Maximum="256" x:Name="YCountNud"
-                                       ValueChanged="Nud_OnValueChanged" />
+                                       ValueChanged="YCountNud_OnValueChanged" />
                 </Grid>
             </GroupBox>
             <GroupBox Header="Exclusions" Margin="5">
@@ -78,10 +78,19 @@
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Control" Margin="5">
-                <StackPanel Width="60">
-                    <Button Content="Ok" Margin="5" Click="Ok_OnClick" />
-                    <Button Content="Cancel" Margin="5" Click="Cancel_OnClick" x:Name="Cancel" />
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <Button Content="Ok" Margin="5" Click="Ok_OnClick" />
+                        <Button Content="Cancel" Margin="5" Click="Cancel_OnClick" x:Name="Cancel" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <ToggleButton Content="No Warnings" Margin="0 5 5 5" x:Name="WarningDisabler" />
+                    </StackPanel>
+                </Grid>
             </GroupBox>
         </StackPanel>
         </ScrollViewer>
